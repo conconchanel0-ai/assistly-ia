@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assistly — Présence digitale pour commerces locaux</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23080808'/><path d='M16 6 L25 26 H21 L19 21 H13 L11 26 H7 Z M16 11 L14.2 18 H17.8 Z' fill='%23c8a96e'/></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080808;
+      --surface: #111111;
+      --border: #1e1e1e;
+      --border-light: #2a2a2a;
+      --gold: #c8a96e;
+      --gold-light: #d4b87a;
+      --gold-dim: rgba(200,169,110,0.1);
+      --text: #f2ede6;
+      --text-muted: #888888;
+      --text-dim: #444444;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── ANIMATIONS ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.75s cubic-bezier(0.4,0,0.2,1), transform 0.75s cubic-bezier(0.4,0,0.2,1);
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.12s; }
+    .reveal-delay-2 { transition-delay: 0.22s; }
+    .reveal-delay-3 { transition-delay: 0.32s; }
+    .reveal-delay-4 { transition-delay: 0.42s; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 28px 64px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.4s ease;
+    }
+    nav.scrolled {
+      padding: 18px 64px;
+      background: rgba(8,8,8,0.96);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 1px;
+    }
+    .logo span { color: var(--gold); }
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 140px 24px 100px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 55%, rgba(200,169,110,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 20%, rgba(200,169,110,0.04) 0%, transparent 50%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(200,169,110,0.03) 0%, transparent 50%);
+      animation: breathe 10s ease-in-out infinite alternate;
+    }
+    @keyframes breathe {
+      0% { opacity: 0.5; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.06); }
+    }
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(200,169,110,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,169,110,0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, black 20%, transparent 75%);
+    }
+    .hero-content { position: relative; max-width: 820px; }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 0.7rem;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeInDown 0.8s ease 0.2s forwards;
+    }
+    .hero-tag::before, .hero-tag::after {
+      content: '';
+      width: 24px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.5;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: none; }
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4.2rem;
+      font-weight: 600;
+      line-height: 1.13;
+      letter-spacing: -0.5px;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.4s forwards;
+    }
+    .hero h1 em { font-style: italic; color: var(--gold); }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: none; }
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 540px;
+      margin: 0 auto 52px;
+      line-height: 1.8;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.55s forwards;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.7s forwards;
+    }
+    .btn-gold {
+      background: var(--gold);
+      color: #080808;
+      padding: 16px 40px;
+      font-size: 0.78rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      border: none;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.15s;
+      display: inline-block;
+    }
+    .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent;
+      color: var(--text-muted);
+      padding: 16px 40px;
+      font-size: 0.78rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid var(--border-light);
+      transition: border-color 0.25s, color 0.25s;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--text); }
+
+    /* ── STATS ── */
+    .stats-strip {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+    }
+    .stat {
+      flex: 1;
+      max-width: 300px;
+      text-align: center;
+      padding: 52px 32px;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 600;
+      color: var(--gold);
+      display: block;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      font-weight: 500;
+    }
+
+    /* ── SECTION BASE ── */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 120px 48px;
+    }
+    .section-tag {
+      font-size: 0.68rem;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: 18px;
+      letter-spacing: -0.3px;
+    }
+    .section-sub {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      max-width: 500px;
+      line-height: 1.85;
+      font-weight: 300;
+      margin-bottom: 80px;
+    }
+
+    /* ── SERVICES ── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .service-card {
+      background: var(--bg);
+      padding: 56px 48px;
+      transition: background 0.35s;
+      position: relative;
+      overflow: hidden;
+    }
+    .service-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+    .service-card:hover::after { transform: scaleX(1); }
+    .service-card:hover { background: #0e0e0e; }
+    .service-num {
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      color: var(--text-dim);
+      font-weight: 500;
+      margin-bottom: 32px;
+      display: block;
+    }
+    .service-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      line-height: 1.3;
+    }
+    .service-desc {
+      font-size: 0.87rem;
+      color: var(--text-muted);
+      line-height: 1.85;
+      margin-bottom: 36px;
+      font-weight: 300;
+    }
+    .service-price {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .price-main {
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: var(--text);
+      font-family: 'Playfair Display', serif;
+    }
+    .price-suffix {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      letter-spacing: 0.5px;
+    }
+
+    /* FEATURED */
+    .service-card.featured {
+      grid-column: span 2;
+      background: var(--surface);
+      padding: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .service-card.featured::after { display: none; }
+    .service-card.featured:hover { background: var(--surface); }
+    .featured-left {
+      padding: 56px 48px;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .featured-left::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    }
+    .featured-right { padding: 56px 48px; }
+    .featured-badge {
+      display: inline-block;
+      background: var(--gold-dim);
+      color: var(--gold);
+      font-size: 0.65rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      margin-bottom: 28px;
+      font-weight: 600;
+      border: 1px solid rgba(200,169,110,0.2);
+    }
+    .feature-list { list-style: none; margin-top: 24px; }
+    .feature-list li {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-weight: 300;
+      line-height: 1.5;
+    }
+    .feature-list li:last-child { border-bottom: none; }
+    .feature-list li::before {
+      content: '';
+      width: 18px;
+      height: 1px;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+    .economy-note {
+      font-size: 0.78rem;
+      color: var(--gold);
+      margin-top: 18px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .economy-note::before {
+      content: '';
+      width: 14px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    /* ── ADD-ONS ── */
+    .addons-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 72px 0 10px;
+      letter-spacing: -0.2px;
+    }
+    .addons-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+      font-weight: 300;
+    }
+    .addons-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .addon-card {
+      background: var(--bg);
+      padding: 40px 36px;
+      transition: background 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .addon-card:hover { background: #0d0d0d; }
+    .addon-icon {
+      font-size: 1.4rem;
+      margin-bottom: 18px;
+      display: block;
+    }
+    .addon-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .addon-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 24px;
+      font-weight: 300;
+    }
+    .addon-price {
+      font-size: 0.78rem;
+      color: var(--gold);
+      font-weight: 500;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      letter-spacing: 0.3px;
+    }
+    @media (max-width: 960px) {
+      .addons-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 580px) {
+      .addons-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── PROCESS ── */
+    .process-wrap {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--border);
+      margin-top: 72px;
+    }
+    .process-step {
+      padding: 72px 48px;
+      border-right: 1px solid var(--border);
+    }
+    .process-step:last-child { border-right: none; }
+    .step-index {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 400;
+      color: rgba(200,169,110,0.12);
+      line-height: 1;
+      margin-bottom: 28px;
+      display: block;
+      transition: color 0.4s;
+    }
+    .process-step:hover .step-index { color: rgba(200,169,110,0.28); }
+    .step-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .step-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.85;
+      font-weight: 300;
+    }
+
+    /* ── PRICING ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .pricing-card {
+      background: var(--bg);
+      padding: 48px 36px;
+      transition: background 0.3s;
+      position: relative;
+    }
+    .pricing-card:hover { background: #0d0d0d; }
+    .pricing-card.best {
+      background: var(--surface);
+    }
+    .pricing-card.best::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    }
+    .pricing-tag {
+      font-size: 0.62rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      font-weight: 500;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .pricing-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 32px;
+      line-height: 1.35;
+    }
+    .p-amount {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .p-amount small { font-size: 1rem; color: var(--text-muted); font-weight: 300; }
+    .p-recur {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-bottom: 36px;
+      letter-spacing: 0.3px;
+      min-height: 20px;
+    }
+    .p-features {
+      list-style: none;
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+    }
+    .p-features li {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      padding: 9px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-weight: 300;
+      line-height: 1.5;
+    }
+    .p-features li::before {
+      content: '—';
+      color: var(--gold);
+      flex-shrink: 0;
+      font-size: 0.68rem;
+      margin-top: 3px;
+    }
+    .p-note {
+      font-size: 0.75rem;
+      color: var(--gold);
+      margin-top: 20px;
+      font-weight: 500;
+    }
+
+    /* ── DEMO ── */
+    .demo-wrap { border-top: 1px solid var(--border); }
+    .demo-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 100px;
+      align-items: center;
+    }
+    .demo-browser {
+      border: 1px solid var(--border-light);
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+    }
+    .demo-bar {
+      background: #161616;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #ff5f57; }
+    .dot.y { background: #ffbd2e; }
+    .dot.g { background: #28ca41; }
+    .url-display {
+      flex: 1;
+      margin-left: 8px;
+      background: #1e1e1e;
+      padding: 5px 14px;
+      font-size: 0.7rem;
+      color: #555;
+      letter-spacing: 0.5px;
+    }
+    .demo-body {
+      padding: 48px 36px;
+      text-align: center;
+      background: #0c0c0c;
+    }
+    .demo-body p {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+    }
+    .demo-body a {
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      transition: opacity 0.2s;
+    }
+    .demo-body a:hover { opacity: 0.65; }
+
+    /* ── CONTACT ── */
+    .contact-wrap { border-top: 1px solid var(--border); }
+    .contact-links {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 52px;
+    }
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      padding: 20px 32px;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.87rem;
+      transition: border-color 0.25s, color 0.25s, background 0.25s;
+      font-weight: 400;
+    }
+    .contact-link:hover { border-color: var(--gold); color: var(--text); background: #141414; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 64px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .f-copy { font-size: 0.75rem; color: var(--text-dim); letter-spacing: 1.5px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      nav, nav.scrolled { padding: 18px 24px; }
+      .hero h1 { font-size: 2.8rem; }
+      .section { padding: 80px 24px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .service-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
+      .featured-left { border-right: none; border-bottom: 1px solid var(--border); }
+      .process-grid { grid-template-columns: 1fr; }
+      .process-step { border-right: none; border-bottom: 1px solid var(--border); }
+      .process-step:last-child { border-bottom: none; }
+      .pricing-grid { grid-template-columns: 1fr 1fr; }
+      .demo-inner { grid-template-columns: 1fr; gap: 48px; }
+      .stats-strip { flex-wrap: wrap; }
+      .stat { min-width: 50%; border-right: none; border-bottom: 1px solid var(--border); }
+      footer { padding: 32px 24px; flex-direction: column; gap: 16px; text-align: center; }
+    }
+    @media (max-width: 580px) {
+      .hero h1 { font-size: 2.1rem; }
+      .section-title { font-size: 1.9rem; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .stat { min-width: 100%; }
+      .service-card, .featured-left, .featured-right { padding: 40px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="logo">Assis<span>tly</span></div>
+  <a href="#contact" class="nav-link">Nous contacter</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Épinal &nbsp;·&nbsp; Vosges &nbsp;·&nbsp; Commerces locaux</div>
+    <h1>Vos clients cherchent en ligne.<br><em>Soyez là</em> quand ils cherchent.</h1>
+    <p class="hero-sub">Site vitrine, chatbot IA, réservations en ligne — on s'occupe de votre présence digitale de A à Z, pour que vous puissiez vous concentrer sur votre métier.</p>
+    <div class="hero-cta">
+      <a href="https://conconchanel0-ai.github.io/restaurant-demo/" target="_blank" class="btn-gold">Voir la démo</a>
+      <a href="#contact" class="btn-outline">Nous contacter</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip reveal">
+  <div class="stat">
+    <span class="stat-num" data-count="48">0</span>
+    <span class="stat-label">Heures pour être en ligne</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">8</span>
+    <span class="stat-label">Services disponibles</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">100%</span>
+    <span class="stat-label">Local — Épinal & environs</span>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="section">
+  <span class="section-tag reveal">Ce que l'on fait</span>
+  <h2 class="section-title reveal reveal-delay-1">Nos services.<br>Un seul interlocuteur.</h2>
+  <p class="section-sub reveal reveal-delay-2">Chaque prestation fonctionne seule ou en combinaison. Vous choisissez ce dont vous avez besoin — pas ce qu'on veut vous vendre.</p>
+
+  <div class="services-grid">
+
+    <div class="service-card reveal">
+      <span class="service-num">01</span>
+      <h3 class="service-name">Refonte de site vitrine</h3>
+      <p class="service-desc">Votre site actuel date, n'est pas adapté au mobile, ou n'existe pas encore. On le refait de zéro — design, contenu, mise en ligne. En une semaine, vos clients vous trouvent sur Google avec un site qui donne envie de venir.</p>
+      <div class="service-price">
+        <span class="price-main">490 €</span>
+        <span class="price-suffix">— paiement unique</span>
+      </div>
+    </div>
+
+    <div class="service-card reveal reveal-delay-1">
+      <span class="service-num">02</span>
+      <h3 class="service-name">Chatbot IA</h3>
+      <p class="service-desc">Un visiteur arrive sur votre site à 22h avec une question. Sans chatbot, il repart sans réponse et va voir la concurrence. Avec le nôtre, il obtient une réponse immédiate — horaires, menu, prix, allergènes. Tout ce que vous lui auriez dit au téléphone.</p>
+      <div class="service-price">
+        <span class="price-main">349 €</span>
+        <span class="price-suffix">— puis 79 €/mois</span>
+      </div>
+    </div>
+
+    <div class="service-card reveal reveal-delay-2" style="grid-column: span 2;">
+      <span class="service-num">03</span>
+      <h3 class="service-name">Réservations en ligne</h3>
+      <p class="service-desc">Vos clients réservent directement depuis votre site. Vous recevez une notification instantanée. Inclus : rappels SMS automatiques avant chaque table, application de gestion sur votre téléphone, et liste d'attente pour les soirs complets.</p>
+      <div class="service-price">
+        <span class="price-main">449 €</span>
+        <span class="price-suffix">— puis 99 €/mois</span>
+      </div>
+    </div>
+
+    <div class="service-card reveal">
+      <span class="service-num">04</span>
+      <h3 class="service-name">Carte de fidélité digitale</h3>
+      <p class="service-desc">Une carte de fidélité sur le téléphone de vos clients — sans application, sans compte, sans impression. Ils accumulent des visites et débloquent des récompenses. Vous fidélisez sans rien gérer manuellement.</p>
+      <div class="service-price">
+        <span class="price-main">149 €</span>
+        <span class="price-suffix">— puis 49 €/mois</span>
+      </div>
+    </div>
+
+    <div class="service-card reveal reveal-delay-1" style="opacity:0.55;pointer-events:none;">
+      <span class="service-num">05</span>
+      <span style="display:inline-block;font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-dim);padding:3px 10px;border-radius:20px;margin-bottom:14px;font-weight:600;">Bientôt</span>
+      <h3 class="service-name">Gestion des avis Google</h3>
+      <p class="service-desc">Après chaque repas, vos clients reçoivent automatiquement une invitation à laisser un avis. Votre note Google augmente sans que vous n'ayez à demander quoi que ce soit.</p>
+      <div class="service-price">
+        <span class="price-main">149 €</span>
+        <span class="price-suffix">— puis 29 €/mois</span>
+      </div>
+    </div>
+
+    <div class="service-card featured reveal reveal-delay-2">
+      <div class="featured-left">
+        <span class="featured-badge">Recommandé</span>
+        <span class="service-num">06</span>
+        <h3 class="service-name">Pack Complet</h3>
+        <p class="service-desc">Les trois prestations fondamentales réunies, conçues pour fonctionner ensemble. Chatbot lié aux réservations, site optimisé pour les deux. Un seul interlocuteur, une seule facture. Achetés séparément : 1 288 € + 178 €/mois — ici c'est 799 € + 149 €/mois.</p>
+        <div class="service-price" style="margin-top: 36px;">
+          <span class="price-main">799 €</span>
+          <span class="price-suffix">— puis 149 €/mois</span>
+        </div>
+        <p class="economy-note">489 € économisés + 29 €/mois à vie</p>
+      </div>
+      <div class="featured-right">
+        <p style="font-size: 0.68rem; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; font-weight: 500;">Inclus dans le pack</p>
+        <ul class="feature-list">
+          <li>Site vitrine conçu sur mesure, adapté mobile</li>
+          <li>Chatbot IA formé avec vos informations</li>
+          <li>Formulaire de réservation intégré au site</li>
+          <li>Notifications instantanées sur votre téléphone</li>
+          <li>Mises à jour du contenu sans frais supplémentaires</li>
+          <li>Support disponible — réponse le jour même</li>
+          <li>Mise en ligne en moins de 48 heures</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODULES (dépendent des réservations) -->
+  <div class="reveal">
+    <h3 class="addons-title">Modules de gestion</h3>
+    <p class="addons-sub">Extensions activables avec le service Réservations en ligne.</p>
+  </div>
+  <div class="addons-grid" style="grid-template-columns: 1fr 1fr;">
+
+    <div class="addon-card reveal">
+      <span class="service-num" style="margin-bottom:20px;">07</span>
+      <h4 class="addon-name">Rappels SMS anti no-show</h4>
+      <p class="addon-desc">Un SMS automatique est envoyé à chaque client 1h avant sa réservation. Il répond OUI pour confirmer, NON pour annuler. La table est libérée instantanément pour quelqu'un d'autre.</p>
+      <div class="addon-price">Inclus dans Réservations — ou +49 €/mois en module seul</div>
+    </div>
+
+    <div class="addon-card reveal reveal-delay-1">
+      <span class="service-num" style="margin-bottom:20px;">08</span>
+      <h4 class="addon-name">Liste d'attente automatique</h4>
+      <p class="addon-desc">Quand toutes vos tables sont prises, vos clients s'inscrivent en liste d'attente. Dès qu'une annulation arrive, le premier de la liste reçoit un SMS en temps réel.</p>
+      <div class="addon-price">Inclus dans Réservations — ou +39 €/mois en module seul</div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- PROCESS -->
+<div class="process-wrap">
+  <div class="section">
+    <span class="section-tag reveal">Comment ça se passe</span>
+    <h2 class="section-title reveal reveal-delay-1">En ligne en 48 heures.</h2>
+    <div class="process-grid">
+      <div class="process-step reveal">
+        <span class="step-index">01</span>
+        <h3 class="step-title">Vous nous envoyez vos infos</h3>
+        <p class="step-desc">Photos, textes, horaires — ce que vous avez. On vous pose les questions manquantes. Pas besoin d'être organisé, on s'adapte à ce que vous pouvez nous donner.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-1">
+        <span class="step-index">02</span>
+        <h3 class="step-title">On configure, on développe</h3>
+        <p class="step-desc">On construit votre site, on forme le chatbot, on connecte les réservations. Vous recevez un lien de prévisualisation pour valider avant la mise en ligne.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-2">
+        <span class="step-index">03</span>
+        <h3 class="step-title">Ça tourne tout seul</h3>
+        <p class="step-desc">Une fois en ligne, vous n'avez rien à faire. Le chatbot répond, les réservations arrivent sur votre téléphone. On s'occupe des mises à jour si vos informations changent.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<section class="section">
+  <span class="section-tag reveal">Tarifs</span>
+  <h2 class="section-title reveal reveal-delay-1">Transparent, sans surprise.</h2>
+  <p class="section-sub reveal reveal-delay-2">Le prix affiché est le prix payé. Pas de frais cachés. Résiliable à tout moment, sans justification.</p>
+
+  <div class="pricing-grid reveal">
+    <div class="pricing-card">
+      <span class="pricing-tag">01 — Site</span>
+      <h3 class="pricing-name">Refonte de site vitrine</h3>
+      <div class="p-amount">490 <small>€</small></div>
+      <p class="p-recur">Paiement unique — pas d'abonnement</p>
+      <ul class="p-features">
+        <li>Design sur mesure</li>
+        <li>Compatible mobile et tablette</li>
+        <li>Mise en ligne incluse</li>
+        <li>Hébergement première année offert</li>
+      </ul>
+    </div>
+
+    <div class="pricing-card">
+      <span class="pricing-tag">02 — Chatbot</span>
+      <h3 class="pricing-name">Chatbot IA</h3>
+      <div class="p-amount">349 <small>€</small></div>
+      <p class="p-recur">puis 79 €/mois — résiliable à tout moment</p>
+      <ul class="p-features">
+        <li>Configuration complète</li>
+        <li>Formé avec vos données</li>
+        <li>Mises à jour contenu incluses</li>
+        <li>Support réactif inclus</li>
+      </ul>
+    </div>
+
+    <div class="pricing-card">
+      <span class="pricing-tag">03 — Réservations</span>
+      <h3 class="pricing-name">Réservations en ligne</h3>
+      <div class="p-amount">449 <small>€</small></div>
+      <p class="p-recur">puis 99 €/mois — résiliable à tout moment</p>
+      <ul class="p-features">
+        <li>Formulaire intégré à votre site</li>
+        <li>Notification WhatsApp instantanée</li>
+        <li>Rappels SMS automatiques anti no-show</li>
+        <li>Liste d'attente pour les soirs complets</li>
+        <li>Application admin sur votre téléphone</li>
+        <li>Aucune commission sur réservations</li>
+      </ul>
+    </div>
+
+    <div class="pricing-card best">
+      <span class="pricing-tag">04 — Pack</span>
+      <h3 class="pricing-name">Pack Complet</h3>
+      <div class="p-amount">799 <small>€</small></div>
+      <p class="p-recur">puis 149 €/mois — au lieu de 178 €/mois</p>
+      <p style="font-size:0.78rem;color:var(--gold);margin-bottom:8px;font-weight:600;">799 € au lieu de 1 288 € en achat séparé</p>
+      <ul class="p-features">
+        <li>Site vitrine sur mesure</li>
+        <li>Chatbot IA configuré</li>
+        <li>Réservations en ligne intégrées</li>
+        <li>Tout conçu pour fonctionner ensemble</li>
+        <li>Support prioritaire — réponse le jour même</li>
+        <li>Mises à jour de contenu illimitées</li>
+        <li>Un seul interlocuteur, une seule facture</li>
+        <li>Mise en ligne en 24h</li>
+      </ul>
+      <p class="p-note">489 € économisés + 29 €/mois à vie</p>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<div class="demo-wrap">
+  <div class="section">
+    <span class="section-tag reveal">Démo</span>
+    <h2 class="section-title reveal reveal-delay-1">Voyez ce que ça donne avant de décider.</h2>
+    <p style="font-size:0.9rem;color:var(--text-muted);line-height:1.85;margin-top:16px;margin-bottom:48px;font-weight:300;max-width:480px;" class="reveal reveal-delay-2">Trois démos en conditions réelles. Cliquez, testez, réservez — exactement ce que verra votre client.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;" class="reveal">
+
+      <!-- Demo 1 — Restaurant -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="background:#0e0e0e;padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)">
+          <div style="width:9px;height:9px;border-radius:50%;background:#ff5f57"></div>
+          <div style="width:9px;height:9px;border-radius:50%;background:#febc2e"></div>
+          <div style="width:9px;height:9px;border-radius:50%;background:#28c840"></div>
+          <span style="font-size:0.68rem;color:var(--text-muted);margin-left:8px;letter-spacing:1px">restaurant-demo</span>
+        </div>
+        <div style="padding:28px 24px">
+          <div style="font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:600">01 — Site + Réservations</div>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:10px;color:var(--text)">Le Gourmet</h3>
+          <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.7;margin-bottom:24px">Site vitrine, chatbot IA et formulaire de réservation intégré. Testez en conditions réelles.</p>
+          <a href="https://conconchanel0-ai.github.io/restaurant-demo/" target="_blank" style="display:inline-block;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid var(--gold-dim);padding:8px 18px;border-radius:6px;transition:all .2s;font-weight:600" onmouseover="this.style.background='var(--gold-dim)'" onmouseout="this.style.background='transparent'">Ouvrir la démo</a>
+        </div>
+      </div>
+
+      <!-- Demo 2 — Admin PWA -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="background:#0e0e0e;padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)">
+          <div style="width:9px;height:9px;border-radius:50%;background:#ff5f57"></div>
+          <div style="width:9px;height:9px;border-radius:50%;background:#febc2e"></div>
+          <div style="width:9px;height:9px;border-radius:50%;background:#28c840"></div>
+          <span style="font-size:0.68rem;color:var(--text-muted);margin-left:8px;letter-spacing:1px">admin-demo</span>
+        </div>
+        <div style="padding:28px 24px">
+          <div style="font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:600">03 — Réservations</div>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:10px;color:var(--text)">Application patron</h3>
+          <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.7;margin-bottom:24px">Interface de gestion des réservations. Tables, SMS rappels, liste d'attente. Mot de passe : demo2026</p>
+          <a href="https://conconchanel0-ai.github.io/admin-demo/" target="_blank" style="display:inline-block;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid var(--gold-dim);padding:8px 18px;border-radius:6px;transition:all .2s;font-weight:600" onmouseover="this.style.background='var(--gold-dim)'" onmouseout="this.style.background='transparent'">Ouvrir la démo</a>
+        </div>
+      </div>
+
+      <!-- Demo 3 — Fidélité -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="background:#0e0e0e;padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)">
+          <div style="width:9px;height:9px;border-radius:50%;background:#ff5f57"></div>
+          <div style="width:9px;height:9px;border-radius:50%;background:#febc2e"></div>
+          <div style="width:9px;height:9px;border-radius:50%;background:#28c840"></div>
+          <span style="font-size:0.68rem;color:var(--text-muted);margin-left:8px;letter-spacing:1px">fidelite-demo</span>
+        </div>
+        <div style="padding:28px 24px">
+          <div style="font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:600">04 — Fidélité</div>
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:10px;color:var(--text)">Carte de fidélité</h3>
+          <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.7;margin-bottom:24px">Carte digitale installable sur le téléphone du client. Sans application, sans compte. Récompenses automatiques.</p>
+          <a href="https://conconchanel0-ai.github.io/fidelite-demo/" target="_blank" style="display:inline-block;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid var(--gold-dim);padding:8px 18px;border-radius:6px;transition:all .2s;font-weight:600" onmouseover="this.style.background='var(--gold-dim)'" onmouseout="this.style.background='transparent'">Ouvrir la démo</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div class="contact-wrap" id="contact">
+  <div class="section">
+    <div class="reveal">
+      <span class="section-tag">Contact</span>
+      <h2 class="section-title">On vous prépare une démo<br>adaptée à votre commerce.</h2>
+      <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.85; margin-top: 18px; max-width: 460px; font-weight: 300;">Gratuit, sans engagement. On regarde ensemble ce dont vous avez besoin et on vous montre ce que ça donnerait pour votre établissement.</p>
+      <div class="contact-links">
+        <a href="tel:0673322061" class="contact-link">06 73 32 20 61</a>
+        <a href="mailto:conradchanel@googlemail.com" class="contact-link">Envoyer un email</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo" style="font-size: 1.1rem;">Assis<span>tly</span></div>
+  <span class="f-copy">© 2026 — Épinal, Vosges</span>
+</footer>
+
+<script>
+  // Nav on scroll
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+  }, { passive: true });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revealObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  // Counter animation
+  const counters = document.querySelectorAll('[data-count]');
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const target = parseInt(e.target.dataset.count);
+        let start = 0;
+        const duration = 1200;
+        const step = 16;
+        const increment = target / (duration / step);
+        const timer = setInterval(() => {
+          start += increment;
+          if (start >= target) {
+            e.target.textContent = target;
+            clearInterval(timer);
+          } else {
+            e.target.textContent = Math.floor(start);
+          }
+        }, step);
+        counterObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(el => counterObserver.observe(el));
+</script>
+
+</body>
+</html>
