@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assistly — Système de réservation pour restaurants à Épinal et dans les Vosges</title>
+  <meta name="description" content="Assistly est la suite digitale pour restaurants des Vosges : réservation en ligne, SMS anti no-show, chatbot IA et fidélité. Abonnement fixe, sans commission. Basé à Épinal.">
+  <meta name="keywords" content="réservation restaurant Épinal, logiciel restaurant Vosges, anti no-show restaurant, alternative TheFork, système réservation restaurant">
+  <meta name="author" content="Conrad — Assistly">
+  <meta property="og:title" content="Assistly — Suite digitale pour restaurants des Vosges">
+  <meta property="og:description" content="Réservation en ligne, SMS anti no-show, chatbot IA. Abonnement fixe, sans commission. Basé à Épinal.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:url" content="https://assistly.fr/">
+  <link rel="canonical" href="https://assistly.fr/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Assistly",
+    "description": "Suite digitale pour restaurants locaux : réservation en ligne, SMS anti no-show, chatbot IA, fidélité.",
+    "url": "https://assistly.fr",
+    "telephone": "+33673322061",
+    "email": "conradchanel@gmail.com",
+    "founder": { "@type": "Person", "name": "Conrad" },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Épinal",
+      "addressRegion": "Vosges",
+      "postalCode": "88000",
+      "addressCountry": "FR"
+    },
+    "areaServed": { "@type": "AdministrativeArea", "name": "Vosges" },
+    "priceRange": "€€"
+  }
+  </script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 1rem; line-height: 1.6; color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; border: none; background: none; font: inherit; }
+ul, ol { list-style: none; }
+abbr { text-decoration: none; }
+
+:root {
+  --primary: #00539C; --primary-light: #0066BD;
+  --accent: #EEA47F; --accent-hover: #C47E5A; --accent-bg: #FEF6F0;
+  --text: #1E293B; --text-muted: #64748B; --text-light: #94A3B8;
+  --bg: #FFFFFF; --bg-alt: #F8FAFC; --bg-dark: #002D5C;
+  --border: #E2E8F0; --border-strong: #CBD5E1; --success: #16A34A;
+  --radius-sm: 6px; --radius: 12px; --radius-lg: 20px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow: 0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,.12);
+  --transition: 200ms ease;
+}
+
+h1, h2, h3, h4 { font-weight: 700; line-height: 1.2; color: var(--primary); }
+h1 { font-size: clamp(1.75rem, 5vw, 3rem); }
+h2 { font-size: clamp(1.5rem, 4vw, 2.25rem); }
+h3 { font-size: clamp(1.05rem, 2.5vw, 1.25rem); }
+p { line-height: 1.65; }
+.accent { color: var(--accent); }
+
+.container { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 1.25rem; }
+@media (min-width: 768px) { .container { padding: 0 2rem; } }
+@media (min-width: 1200px) { .container { padding: 0 2.5rem; } }
+section { padding: 4rem 0; }
+@media (min-width: 768px) { section { padding: 6rem 0; } }
+.section-title { text-align: center; margin-bottom: 0.75rem; }
+.section-subtitle { text-align: center; color: var(--text-muted); max-width: 600px; margin: 0 auto 3rem; font-size: 1.05rem; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.875rem 1.75rem; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.95rem; min-height: 48px; transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition), transform var(--transition); cursor: pointer; white-space: nowrap; }
+.btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary { background: transparent; color: var(--primary); border: 2px solid var(--border-strong); }
+.btn-secondary:hover { border-color: var(--primary); background: var(--bg-alt); }
+.btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--border-strong); }
+.btn-outline:hover { border-color: var(--primary); background: var(--primary); color: #fff; }
+.btn-full { width: 100%; }
+
+/* NAV */
+.nav-wrapper { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); transition: box-shadow var(--transition); }
+.nav-wrapper.scrolled { box-shadow: var(--shadow); }
+.nav { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 1rem; }
+.nav-logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.2rem; color: var(--primary); flex-shrink: 0; }
+.logo-mark { width: 28px; height: 28px; background: var(--accent); border-radius: 6px; flex-shrink: 0; }
+.logo-text { letter-spacing: -0.02em; }
+.nav-toggle { display: flex; flex-direction: column; gap: 5px; padding: 8px; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; border-radius: var(--radius-sm); }
+.nav-toggle span { display: block; width: 22px; height: 2px; background: var(--primary); border-radius: 2px; transition: transform 250ms ease, opacity 250ms ease; transform-origin: center; }
+.nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.nav-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: #fff; border-bottom: 1px solid var(--border); flex-direction: column; padding: 1rem 1.25rem; gap: 0.25rem; box-shadow: var(--shadow); }
+.nav-menu.open { display: flex; }
+.nav-link { display: flex; align-items: center; padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-weight: 500; color: var(--text); transition: background var(--transition), color var(--transition); min-height: 44px; }
+.nav-link:hover { background: var(--bg-alt); }
+.nav-cta { background: var(--accent); color: #fff !important; text-align: center; justify-content: center; margin-top: 0.5rem; border-radius: var(--radius-sm); }
+.nav-cta:hover { background: var(--accent-hover) !important; }
+@media (min-width: 900px) {
+  .nav-toggle { display: none; }
+  .nav-menu { display: flex !important; position: static; flex-direction: row; border: none; padding: 0; gap: 0.25rem; background: none; box-shadow: none; }
+  .nav-link { padding: 0.5rem 0.875rem; font-size: 0.9rem; }
+  .nav-cta { margin-top: 0; padding: 0.5rem 1.25rem; }
+}
+
+/* HERO */
+.hero { padding: 3.5rem 0 2.5rem; background: linear-gradient(180deg, #fff 0%, var(--bg-alt) 100%); overflow: hidden; }
+@media (min-width: 768px) { .hero { padding: 5rem 0 4rem; } }
+.hero-inner { display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center; }
+@media (min-width: 1024px) { .hero-inner { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+.hero-badge { display: inline-block; background: var(--accent-bg); color: var(--accent); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.35rem 0.9rem; border-radius: 999px; margin-bottom: 1.25rem; border: 1px solid #FED7AA; }
+.hero-title { font-size: clamp(1.75rem, 5.5vw, 3.25rem); line-height: 1.15; margin-bottom: 1.25rem; letter-spacing: -0.02em; }
+.hero-subtitle { font-size: 1.05rem; color: var(--text-muted); margin-bottom: 2rem; max-width: 520px; line-height: 1.7; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
+.hero-note { font-size: 0.82rem; color: var(--text-light); }
+.hero-visual { display: flex; justify-content: center; }
+.mockup-wrapper { position: relative; width: 100%; max-width: 480px; }
+.mockup-desktop { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-lg), 0 0 0 1px var(--border); overflow: hidden; }
+.mockup-bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: var(--bg-alt); border-bottom: 1px solid var(--border); }
+.mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+.mockup-dot.red { background: #FF5F57; } .mockup-dot.yellow { background: #FFBD2E; } .mockup-dot.green { background: #28CA41; }
+.mockup-url { margin-left: 8px; font-size: 0.72rem; color: var(--text-muted); background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 2px 10px; flex: 1; max-width: 160px; }
+.mockup-screen { display: flex; min-height: 220px; }
+.mockup-sidebar { width: 44px; background: var(--primary); padding: 12px 8px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+.mockup-nav-item { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.2); }
+.mockup-nav-item.active { background: var(--accent); }
+.mockup-body { padding: 14px 16px; flex: 1; }
+.mockup-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.mockup-title { font-size: 0.85rem; font-weight: 700; color: var(--primary); }
+.mockup-date { font-size: 0.68rem; color: var(--text-muted); margin-top: 2px; }
+.mockup-live { display: flex; align-items: center; gap: 5px; font-size: 0.65rem; color: var(--success); font-weight: 600; }
+.mockup-live-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse-dot 2s infinite; }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.mockup-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+.mockup-stat { background: var(--bg-alt); border-radius: 6px; padding: 8px 6px; text-align: center; border: 1px solid var(--border); }
+.mockup-stat.green .mockup-stat-num { color: var(--success); }
+.mockup-stat-num { font-size: 1.1rem; font-weight: 800; color: var(--primary); line-height: 1; }
+.mockup-stat-label { font-size: 0.58rem; color: var(--text-muted); margin-top: 2px; }
+.mockup-list { display: flex; flex-direction: column; gap: 6px; }
+.mockup-resa { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--bg-alt); border-radius: 6px; border: 1px solid var(--border); }
+.mockup-resa-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
+.mockup-resa-dot.pending { background: #F59E0B; }
+.mockup-resa-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.mockup-resa-name { font-size: 0.72rem; font-weight: 600; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mockup-resa-sub { font-size: 0.62rem; color: var(--text-muted); }
+.mockup-resa-badge { font-size: 0.58rem; font-weight: 600; padding: 2px 7px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
+.mockup-resa-badge.ok { background: #D1FAE5; color: #065F46; }
+.mockup-resa-badge.pending { background: #FEF3C7; color: #92400E; }
+.mockup-phone { position: absolute; right: -10px; bottom: -24px; width: 130px; background: var(--primary); border-radius: 18px; padding: 10px 8px; box-shadow: var(--shadow-lg); border: 2px solid #003D75; }
+@media (max-width: 400px) { .mockup-phone { display: none; } }
+.mockup-phone-notch { width: 40px; height: 6px; background: #003D75; border-radius: 3px; margin: 0 auto 8px; }
+.mockup-phone-screen { background: #fff; border-radius: 10px; overflow: hidden; min-height: 140px; }
+.mockup-notif { padding: 8px 8px 6px; background: #F8FAFC; border-bottom: 1px solid var(--border); }
+.mockup-notif-app { font-size: 0.58rem; font-weight: 700; color: var(--accent); margin-bottom: 2px; }
+.mockup-notif-title { font-size: 0.64rem; font-weight: 700; color: var(--primary); }
+.mockup-notif-body { font-size: 0.58rem; color: var(--text-muted); }
+.mockup-sms-card { padding: 8px; }
+.mockup-sms-label { font-size: 0.56rem; font-weight: 700; color: var(--success); margin-bottom: 4px; }
+.mockup-sms-text { font-size: 0.58rem; color: var(--text); background: #EFF6FF; border-radius: 8px 8px 8px 2px; padding: 5px 7px; line-height: 1.4; }
+.mockup-sms-time { font-size: 0.52rem; color: var(--text-light); margin-top: 3px; text-align: right; }
+
+/* PROBLEM */
+.problem { background: var(--primary); color: #fff; }
+.problem .section-title { color: #fff; }
+.problem-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; margin-top: 2.5rem; }
+@media (min-width: 640px) { .problem-grid { grid-template-columns: repeat(3, 1fr); } }
+.problem-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius); padding: 1.75rem 1.5rem; transition: background var(--transition); }
+.problem-card:hover { background: rgba(255,255,255,0.1); }
+.problem-card--highlight { background: var(--accent); border-color: transparent; }
+.problem-card--highlight:hover { background: var(--accent-hover); }
+.problem-icon { margin-bottom: 1rem; color: rgba(255,255,255,0.7); }
+.problem-icon.accent { color: #fff; }
+.problem-card--highlight .problem-icon { color: rgba(255,255,255,0.9); }
+.problem-card h3 { color: #fff; margin-bottom: 0.5rem; font-size: 1rem; }
+.problem-card p { color: rgba(255,255,255,0.75); font-size: 0.9rem; }
+.problem-card--highlight p { color: rgba(255,255,255,0.9); }
+.problem-card--highlight strong { color: #fff; }
+
+/* SOLUTION */
+.solution { background: var(--bg-alt); }
+.solution-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
+@media (min-width: 640px) { .solution-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .solution-grid { grid-template-columns: repeat(4, 1fr); } }
+.solution-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; transition: box-shadow var(--transition), border-color var(--transition); }
+.solution-card:hover { box-shadow: var(--shadow); border-color: var(--border-strong); }
+.solution-card-top { display: flex; align-items: center; justify-content: space-between; }
+.solution-icon { width: 44px; height: 44px; background: var(--accent-bg); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0; }
+.solution-num { font-size: 0.72rem; font-weight: 700; color: var(--text-light); letter-spacing: 0.05em; }
+.solution-card h3 { font-size: 1rem; font-weight: 700; color: var(--primary); margin: 0; }
+.solution-list { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+.solution-list li { font-size: 0.875rem; color: var(--text-muted); padding-left: 1.1rem; position: relative; }
+.solution-list li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.solution-demo-link { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; font-weight: 600; color: var(--accent); margin-top: auto; transition: gap var(--transition); min-height: 44px; padding-top: 0.25rem; }
+.solution-demo-link:hover { gap: 0.6rem; }
+.solution-demo-pw { font-weight: 400; color: var(--text-muted); }
+.solution-bonus { background: #fff; border: 2px dashed var(--border-strong); border-radius: var(--radius); padding: 1.5rem; position: relative; }
+.solution-bonus-label { position: absolute; top: -12px; left: 20px; background: var(--accent); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 3px 12px; border-radius: 999px; letter-spacing: 0.04em; }
+.solution-bonus-inner { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1.25rem; margin-top: 0.5rem; }
+.solution-bonus-content { flex: 1; min-width: 200px; }
+.solution-bonus-content h3 { font-size: 1rem; margin-bottom: 0.75rem; }
+
+/* COMPARISON */
+.comparison { background: #fff; }
+.comparison-table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); }
+.comparison-table { width: 100%; border-collapse: collapse; min-width: 480px; }
+.comparison-table thead th { padding: 1rem 1.25rem; text-align: left; font-size: 0.875rem; font-weight: 700; color: var(--text-muted); background: var(--bg-alt); border-bottom: 1px solid var(--border); }
+.comparison-table thead th:first-child { border-radius: var(--radius) 0 0 0; }
+.comparison-table thead th:last-child { border-radius: 0 var(--radius) 0 0; }
+.comparison-table td { padding: 0.9rem 1.25rem; font-size: 0.9rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.comparison-table tr:last-child td { border-bottom: none; }
+.comparison-table td:first-child { color: var(--text-muted); font-weight: 500; }
+.col-assistly { background: var(--accent-bg); }
+.comparison-table thead .col-assistly { color: var(--accent) !important; background: #FEF3E2; }
+.col-assistly.win strong { color: var(--accent); }
+.col-assistly.win { font-weight: 600; }
+td.lose { color: var(--text-muted); }
+
+/* PRICING */
+.pricing { background: var(--bg-alt); }
+.pricing-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; align-items: stretch; }
+@media (min-width: 640px) { .pricing-grid { grid-template-columns: repeat(3, 1fr); } }
+.pricing-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem 1.5rem; display: flex; flex-direction: column; gap: 1rem; position: relative; transition: box-shadow var(--transition); }
+.pricing-card:hover { box-shadow: var(--shadow); }
+.pricing-card--featured { border-color: var(--accent); border-width: 2px; box-shadow: var(--shadow); }
+.pricing-recommended { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; font-size: 0.75rem; font-weight: 700; padding: 4px 16px; border-radius: 999px; white-space: nowrap; }
+.pricing-name { font-weight: 700; font-size: 1rem; color: var(--primary); }
+.pricing-price { display: flex; align-items: baseline; gap: 0.25rem; }
+.pricing-amount { font-size: 2.5rem; font-weight: 800; color: var(--primary); letter-spacing: -0.03em; }
+.pricing-period { font-size: 0.9rem; color: var(--text-muted); }
+.pricing-install { font-size: 0.82rem; color: var(--text-muted); margin-top: -0.5rem; }
+.pricing-features { flex: 1; display: flex; flex-direction: column; gap: 0.6rem; }
+.pricing-features li { display: flex; align-items: center; gap: 0.6rem; font-size: 0.875rem; color: var(--text); }
+.pricing-features li svg { color: var(--success); flex-shrink: 0; }
+.pricing-launch-badge { font-size: 0.75rem; font-weight: 600; color: var(--accent); background: var(--accent-bg); padding: 0.35rem 0.75rem; border-radius: var(--radius-sm); text-align: center; }
+.pricing-note { text-align: center; font-size: 0.875rem; color: var(--text-muted); margin-top: 2rem; }
+
+/* DEMOS */
+.demos { background: #fff; }
+.demos-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+@media (min-width: 640px) { .demos-grid { grid-template-columns: repeat(3, 1fr); } }
+.demo-card { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; transition: box-shadow var(--transition), border-color var(--transition), transform var(--transition); cursor: pointer; }
+.demo-card:hover { box-shadow: var(--shadow); border-color: var(--accent); transform: translateY(-3px); }
+.demo-card:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.demo-preview { height: 160px; background: var(--bg-alt); overflow: hidden; display: flex; flex-direction: column; }
+.demo-preview-browser { display: flex; align-items: center; padding: 6px 10px; background: #E2E8F0; gap: 4px; }
+.demo-preview-browser.dark { background: #003D75; }
+.demo-preview-dots span { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #94A3B8; }
+.demo-preview-body { flex: 1; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.demo-preview-body.restaurant { background: linear-gradient(135deg, #003580 0%, #0066BD 100%); gap: 6px; }
+.demo-preview-hero-bar { height: 32px; background: rgba(255,255,255,0.08); border-radius: 6px; }
+.demo-preview-content-lines { display: flex; flex-direction: column; gap: 5px; }
+.demo-line { height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; }
+.demo-line.w80 { width: 80%; } .demo-line.w60 { width: 60%; }
+.demo-preview-btn-mock { width: 80px; height: 20px; background: var(--accent); border-radius: 4px; }
+.demo-chat-bubble { background: rgba(255,255,255,0.95); border-radius: 8px 8px 8px 2px; padding: 6px 10px; font-size: 0.65rem; color: var(--primary); align-self: flex-start; max-width: 90%; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.demo-preview-body.admin { background: var(--primary); display: flex; flex-direction: row; padding: 0; gap: 0; }
+.demo-admin-sidebar { width: 30px; background: #001F4D; padding: 8px 6px; display: flex; flex-direction: column; gap: 6px; }
+.demo-admin-item { height: 5px; background: rgba(255,255,255,0.2); border-radius: 2px; }
+.demo-admin-item.active { background: var(--accent); }
+.demo-admin-content { flex: 1; padding: 10px 8px; display: flex; flex-direction: column; gap: 8px; }
+.demo-admin-stats { display: flex; gap: 5px; }
+.demo-admin-stat { flex: 1; height: 24px; background: rgba(255,255,255,0.1); border-radius: 4px; }
+.demo-admin-stat.accent { background: var(--accent); opacity: 0.8; }
+.demo-admin-row { height: 10px; background: rgba(255,255,255,0.08); border-radius: 3px; }
+.demo-preview-body.fidelite { background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%); align-items: center; justify-content: center; }
+.demo-fidelite-card { background: #fff; border-radius: 10px; padding: 10px 12px; width: 100%; max-width: 200px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.demo-fidelite-title { height: 6px; background: var(--accent); border-radius: 3px; width: 60%; margin-bottom: 8px; }
+.demo-stamps { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.stamp { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--border-strong); background: #fff; display: flex; align-items: center; justify-content: center; font-size: 7px; }
+.stamp.filled { background: var(--accent); border-color: var(--accent); }
+.stamp.reward { background: #FEF3C7; border-color: #F59E0B; color: #F59E0B; font-weight: 700; }
+.demo-fidelite-sub { height: 5px; background: var(--border); border-radius: 2px; width: 50%; margin: 0 auto; }
+.demo-info { padding: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+.demo-info h3 { font-size: 0.95rem; }
+.demo-info p { font-size: 0.825rem; color: var(--text-muted); flex: 1; }
+.demo-pw-badge { display: inline-block; background: var(--bg-alt); border: 1px solid var(--border); color: var(--text-muted); font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: var(--radius-sm); }
+.demo-cta { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; font-weight: 600; color: var(--accent); margin-top: 0.25rem; transition: gap var(--transition); }
+.demo-card:hover .demo-cta { gap: 0.6rem; }
+
+/* TIMELINE */
+.timeline-section { background: var(--bg-alt); }
+.timeline { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; }
+.timeline-step { display: flex; gap: 1.5rem; position: relative; }
+.timeline-step:not(:last-child)::after { content: ''; position: absolute; left: 19px; top: 44px; bottom: -1.5rem; width: 2px; background: var(--border); }
+.timeline-step:not(:last-child) { padding-bottom: 2rem; }
+.timeline-num { width: 40px; height: 40px; background: var(--accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; flex-shrink: 0; z-index: 1; box-shadow: 0 0 0 4px var(--accent-bg); }
+.timeline-content { padding-top: 0.5rem; padding-bottom: 0.25rem; }
+.timeline-content h3 { font-size: 1rem; margin-bottom: 0.35rem; }
+.timeline-content p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; }
+
+/* ABOUT */
+.about { background: #fff; }
+.about-inner { display: flex; flex-direction: column; gap: 2rem; align-items: flex-start; max-width: 720px; margin: 0 auto; }
+@media (min-width: 640px) { .about-inner { flex-direction: row; align-items: flex-start; gap: 2.5rem; } }
+.about-avatar { width: 80px; height: 80px; min-width: 80px; background: linear-gradient(135deg, var(--primary) 0%, #003D75 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: #fff; border: 3px solid var(--accent); }
+.about-content h2 { margin-bottom: 1rem; font-size: 1.5rem; }
+.about-quote { font-size: 0.975rem; color: var(--text-muted); line-height: 1.75; border-left: 3px solid var(--accent); padding-left: 1.25rem; margin-bottom: 1.25rem; }
+.about-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.about-tag { background: var(--bg-alt); border: 1px solid var(--border); color: var(--text-muted); font-size: 0.78rem; font-weight: 600; padding: 0.3rem 0.75rem; border-radius: 999px; }
+
+/* FAQ */
+.faq { background: var(--bg-alt); }
+.faq-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.5rem; }
+.faq-item { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; transition: border-color var(--transition); }
+.faq-item.open { border-color: var(--accent); }
+.faq-question { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.25rem; font-size: 0.95rem; font-weight: 600; color: var(--primary); text-align: left; min-height: 60px; cursor: pointer; transition: background var(--transition); }
+.faq-question:hover { background: var(--bg-alt); }
+.faq-item.open .faq-question { background: var(--accent-bg); }
+.faq-question:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.faq-chevron { flex-shrink: 0; transition: transform 250ms ease; color: var(--text-muted); }
+.faq-item.open .faq-chevron { transform: rotate(180deg); }
+.faq-answer { padding: 0 1.25rem 1.1rem; }
+.faq-answer p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.65; }
+
+/* CONTACT */
+.contact { background: #fff; }
+.contact-inner { display: grid; grid-template-columns: 1fr; gap: 3rem; max-width: 960px; margin: 0 auto; }
+@media (min-width: 768px) { .contact-inner { grid-template-columns: 1fr 1fr; } }
+.contact-intro h2 { margin-bottom: 0.75rem; }
+.contact-lead { color: var(--text-muted); margin-bottom: 2rem; }
+.contact-channels { display: flex; flex-direction: column; gap: 0.875rem; margin-bottom: 1.5rem; }
+.contact-channel { display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: var(--text); }
+.contact-channel svg { color: var(--accent); flex-shrink: 0; }
+.contact-channel a { color: var(--text); font-weight: 500; transition: color var(--transition); }
+.contact-channel a:hover { color: var(--accent); }
+.contact-reassurance { font-size: 0.82rem; color: var(--text-light); }
+.contact-form { display: flex; flex-direction: column; gap: 1.1rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.form-group label { font-size: 0.875rem; font-weight: 600; color: var(--text); }
+.form-group label abbr { color: var(--accent); margin-left: 2px; }
+.form-optional { font-weight: 400; color: var(--text-muted); font-size: 0.82rem; }
+.form-group input, .form-group textarea { padding: 0.75rem 1rem; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: inherit; color: var(--text); background: var(--bg); transition: border-color var(--transition), box-shadow var(--transition); width: 100%; min-height: 48px; }
+.form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(234,88,12,0.12); }
+.form-group input.error { border-color: #DC2626; }
+.form-group input.error:focus { box-shadow: 0 0 0 3px rgba(220,38,38,0.12); }
+.form-group textarea { resize: vertical; min-height: 80px; }
+.form-error { font-size: 0.78rem; color: #DC2626; font-weight: 500; }
+.form-reassurance { font-size: 0.78rem; color: var(--text-light); text-align: center; margin-top: -0.25rem; }
+.contact-success { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 1rem; padding: 3rem 2rem; background: var(--bg-alt); border-radius: var(--radius); border: 1px solid var(--border); }
+.contact-success-icon { width: 72px; height: 72px; background: #D1FAE5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--success); }
+.contact-success h3 { color: var(--primary); font-size: 1.25rem; }
+.contact-success p { color: var(--text-muted); }
+
+/* FOOTER */
+.footer { background: var(--primary); color: rgba(255,255,255,0.7); padding: 3rem 0 2rem; }
+.footer-inner { display: flex; flex-direction: column; gap: 2rem; margin-bottom: 2rem; }
+@media (min-width: 640px) { .footer-inner { flex-direction: row; justify-content: space-between; align-items: flex-start; } }
+.footer-brand { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.footer-brand .logo-mark { background: var(--accent); }
+.footer-brand .logo-text { color: #fff; font-weight: 800; font-size: 1.1rem; }
+.footer-brand p { width: 100%; font-size: 0.875rem; color: rgba(255,255,255,0.5); }
+.footer-nav { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+.footer-nav a { font-size: 0.875rem; color: rgba(255,255,255,0.6); transition: color var(--transition); min-height: 44px; display: flex; align-items: center; }
+.footer-nav a:hover { color: #fff; }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.8rem; }
+@media (min-width: 640px) { .footer-bottom { flex-direction: row; justify-content: space-between; align-items: center; } }
+.footer-legal-links { display: flex; gap: 1rem; }
+.footer-legal-links a { color: rgba(255,255,255,0.45); transition: color var(--transition); }
+.footer-legal-links a:hover { color: rgba(255,255,255,0.8); }
+
+/* ANIMATIONS */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 500ms ease, transform 500ms ease; }
+.reveal.visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+.skip-link { position: absolute; left: -9999px; top: 1rem; z-index: 9999; background: var(--accent); color: #fff; padding: 0.75rem 1.5rem; border-radius: var(--radius-sm); font-weight: 700; }
+.skip-link:focus { left: 1rem; }
+</style>
+</head>
+<body>
+
+  <a href="#hero" class="skip-link">Aller au contenu principal</a>
+
+  <!-- NAV -->
+  <header class="nav-wrapper" id="top">
+    <nav class="nav container" aria-label="Navigation principale">
+      <a href="#top" class="nav-logo" aria-label="Assistly — retour en haut">
+        <span class="logo-mark" aria-hidden="true"></span>
+        <span class="logo-text">Assistly</span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Ouvrir le menu de navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-menu" id="nav-menu" role="list">
+        <li><a href="#solution" class="nav-link">Solution</a></li>
+        <li><a href="#tarifs" class="nav-link">Tarifs</a></li>
+        <li><a href="#demos" class="nav-link">Démos</a></li>
+        <li><a href="#faq" class="nav-link">FAQ</a></li>
+        <li><a href="#contact" class="nav-link nav-cta">Prendre RDV</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero" id="hero" aria-labelledby="hero-title">
+      <div class="container hero-inner">
+        <div class="hero-content">
+          <div class="hero-badge" aria-label="Zone géographique">Épinal &amp; Vosges</div>
+          <h1 class="hero-title" id="hero-title">
+            Le no-show vous coûte <span class="accent">200 à 800€</span> par soirée.<br>On le divise par deux.
+          </h1>
+          <p class="hero-subtitle">Assistly est une suite digitale pour restaurants des Vosges. Réservation en ligne, rappels SMS automatiques, chatbot IA. Abonnement fixe, sans commission.</p>
+          <div class="hero-actions">
+            <a href="#demos" class="btn btn-primary">Voir les démos</a>
+            <a href="#contact" class="btn btn-secondary">Prendre rendez-vous</a>
+          </div>
+          <p class="hero-note">Sans engagement &mdash; Résiliable à tout moment</p>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="mockup-wrapper">
+            <div class="mockup-desktop">
+              <div class="mockup-bar">
+                <span class="mockup-dot red"></span>
+                <span class="mockup-dot yellow"></span>
+                <span class="mockup-dot green"></span>
+                <span class="mockup-url">assistly.fr/admin</span>
+              </div>
+              <div class="mockup-screen">
+                <div class="mockup-sidebar">
+                  <div class="mockup-nav-item active"></div>
+                  <div class="mockup-nav-item"></div>
+                  <div class="mockup-nav-item"></div>
+                  <div class="mockup-nav-item"></div>
+                </div>
+                <div class="mockup-body">
+                  <div class="mockup-header-row">
+                    <div>
+                      <div class="mockup-title">Tableau de bord</div>
+                      <div class="mockup-date">Samedi 10 mai · 18h30</div>
+                    </div>
+                    <div class="mockup-live"><span class="mockup-live-dot"></span> En direct</div>
+                  </div>
+                  <div class="mockup-stats">
+                    <div class="mockup-stat"><div class="mockup-stat-num">14</div><div class="mockup-stat-label">Réservations</div></div>
+                    <div class="mockup-stat"><div class="mockup-stat-num">47</div><div class="mockup-stat-label">Couverts</div></div>
+                    <div class="mockup-stat green"><div class="mockup-stat-num">0</div><div class="mockup-stat-label">No-show</div></div>
+                  </div>
+                  <div class="mockup-list">
+                    <div class="mockup-resa"><span class="mockup-resa-dot"></span><div class="mockup-resa-info"><span class="mockup-resa-name">Famille Martin</span><span class="mockup-resa-sub">19h00 · 4 pers.</span></div><span class="mockup-resa-badge ok">SMS envoyé</span></div>
+                    <div class="mockup-resa"><span class="mockup-resa-dot"></span><div class="mockup-resa-info"><span class="mockup-resa-name">M. Dupont</span><span class="mockup-resa-sub">19h30 · 2 pers.</span></div><span class="mockup-resa-badge ok">Confirmé</span></div>
+                    <div class="mockup-resa"><span class="mockup-resa-dot pending"></span><div class="mockup-resa-info"><span class="mockup-resa-name">Mme Leclerc</span><span class="mockup-resa-sub">20h00 · 6 pers.</span></div><span class="mockup-resa-badge pending">En attente</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mockup-phone">
+              <div class="mockup-phone-notch"></div>
+              <div class="mockup-phone-screen">
+                <div class="mockup-notif">
+                  <div class="mockup-notif-app">Assistly</div>
+                  <div class="mockup-notif-title">Nouvelle réservation</div>
+                  <div class="mockup-notif-body">Martin · 4 pers. · 19h00</div>
+                </div>
+                <div class="mockup-sms-card">
+                  <div class="mockup-sms-label">SMS envoyé</div>
+                  <div class="mockup-sms-text">"Bonjour ! Rappel : votre table est à 19h ce soir. Répondez STOP pour annuler."</div>
+                  <div class="mockup-sms-time">18h00 · automatique</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROBLÈME -->
+    <section class="problem" id="probleme" aria-labelledby="problem-title">
+      <div class="container">
+        <h2 class="section-title" id="problem-title">Le no-show, c'est 15 à 25% de pertes invisibles.</h2>
+        <div class="problem-grid">
+          <div class="problem-card reveal">
+            <div class="problem-icon" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+            <h3>Un samedi soir typique</h3>
+            <p>2 à 4 tables ne se présentent pas &mdash; sans prévenir, sans explication.</p>
+          </div>
+          <div class="problem-card problem-card--highlight reveal">
+            <div class="problem-icon accent" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <h3>Pertes moyennes</h3>
+            <p><strong>200 à 800€ par soirée</strong>, sec. Sur 52 semaines, c'est des dizaines de milliers d'euros évaporés.</p>
+          </div>
+          <div class="problem-card reveal">
+            <div class="problem-icon" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <h3>Sans aucun outil</h3>
+            <p>87% des restaurants locaux n'ont aucun système de rappel automatique en place.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOLUTION -->
+    <section class="solution" id="solution" aria-labelledby="solution-title">
+      <div class="container">
+        <h2 class="section-title" id="solution-title">Tout ce dont votre restaurant a besoin, <span class="accent">sans l'usine à gaz.</span></h2>
+        <p class="section-subtitle">4 briques qui fonctionnent ensemble. Vous n'activez que ce dont vous avez besoin.</p>
+        <div class="solution-grid">
+          <div class="solution-card reveal">
+            <div class="solution-card-top"><div class="solution-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><span class="solution-num">01</span></div>
+            <h3>Réservation en ligne</h3>
+            <ul class="solution-list" role="list"><li>Formulaire ou chatbot IA, au choix</li><li>Notification WhatsApp instantanée</li><li>Affichage en temps réel sur votre tableau de bord</li></ul>
+            <a href="https://conconchanel0-ai.github.io/restaurant-demo/" target="_blank" rel="noopener noreferrer" class="solution-demo-link">Voir la démo <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+          </div>
+          <div class="solution-card reveal">
+            <div class="solution-card-top"><div class="solution-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.59 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><span class="solution-num">02</span></div>
+            <h3>SMS anti no-show</h3>
+            <ul class="solution-list" role="list"><li>Rappel automatique 1h avant la réservation</li><li>Diminution drastique des absences</li><li>Coût des SMS inclus dans l'abonnement</li></ul>
+          </div>
+          <div class="solution-card reveal">
+            <div class="solution-card-top"><div class="solution-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><span class="solution-num">03</span></div>
+            <h3>Chatbot IA</h3>
+            <ul class="solution-list" role="list"><li>Répond à vos clients 24h/24</li><li>Réserve lui-même (pas juste répondre)</li><li>Connaît votre menu, horaires, allergènes</li></ul>
+          </div>
+          <div class="solution-card reveal">
+            <div class="solution-card-top"><div class="solution-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div><span class="solution-num">04</span></div>
+            <h3>Tableau de bord</h3>
+            <ul class="solution-list" role="list"><li>Vue du jour : réservations, tables, liste d'attente</li><li>Ajout manuel des réservations téléphoniques</li><li>Accessible sur téléphone, tablette, ordi</li></ul>
+            <a href="https://conconchanel0-ai.github.io/admin-demo/" target="_blank" rel="noopener noreferrer" class="solution-demo-link">Voir la démo <em class="solution-demo-pw">(mot de passe : demo2026)</em> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+          </div>
+        </div>
+        <div class="solution-bonus reveal">
+          <div class="solution-bonus-label">Bonus inclus dans le Pack Complet</div>
+          <div class="solution-bonus-inner">
+            <div class="solution-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+            <div class="solution-bonus-content">
+              <h3>Carte de fidélité digitale</h3>
+              <ul class="solution-list" role="list"><li>QR code, sans application à télécharger</li><li>10 visites = 1 repas offert (personnalisable)</li></ul>
+            </div>
+            <a href="https://conconchanel0-ai.github.io/fidelite-demo/" target="_blank" rel="noopener noreferrer" class="solution-demo-link">Voir la démo <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPARAISON -->
+    <section class="comparison" id="comparaison" aria-labelledby="comparison-title">
+      <div class="container">
+        <h2 class="section-title" id="comparison-title">Pourquoi Assistly et pas un autre ?</h2>
+        <p class="section-subtitle">Comparez par vous-même avec les plateformes qui dominent actuellement le marché.</p>
+        <div class="comparison-table-wrapper reveal">
+          <table class="comparison-table" aria-label="Comparaison Assistly vs TheFork/Zenchef">
+            <thead><tr><th scope="col">Critère</th><th scope="col" class="col-assistly"><span class="logo-text">Assistly</span></th><th scope="col">TheFork / Zenchef</th></tr></thead>
+            <tbody>
+              <tr><td>Commission par couvert</td><td class="col-assistly win"><strong>0€</strong></td><td class="lose">2 à 5€</td></tr>
+              <tr><td>Abonnement</td><td class="col-assistly win"><strong>Fixe et prévisible</strong></td><td class="lose">Variable</td></tr>
+              <tr><td>Présence locale</td><td class="col-assistly win"><strong>Épinal, Vosges</strong></td><td class="lose">Paris</td></tr>
+              <tr><td>Personnalisation</td><td class="col-assistly win"><strong>Sur mesure</strong></td><td class="lose">Templates</td></tr>
+              <tr><td>Formation</td><td class="col-assistly win"><strong>Incluse</strong></td><td class="lose">Payante</td></tr>
+              <tr><td>Engagement</td><td class="col-assistly win"><strong>0 mois</strong></td><td class="lose">12 à 24 mois</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TARIFS -->
+    <section class="pricing" id="tarifs" aria-labelledby="pricing-title">
+      <div class="container">
+        <h2 class="section-title" id="pricing-title">Pricing transparent, sans surprise.</h2>
+        <p class="section-subtitle">Un tarif fixe. Pas de commission cachée. Pas de mauvaise surprise en fin de mois.</p>
+        <div class="pricing-grid">
+          <div class="pricing-card reveal">
+            <div class="pricing-name">Pack Démarrage</div>
+            <div class="pricing-price"><span class="pricing-amount">99€</span><span class="pricing-period">/mois</span></div>
+            <div class="pricing-install">+ 399€ d'installation</div>
+            <ul class="pricing-features" role="list">
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Réservations en ligne</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>SMS anti no-show</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Tableau de bord</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Formation incluse</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Support direct (Conrad)</li>
+            </ul>
+            <div class="pricing-launch-badge">3 premiers clients — tarif lancement</div>
+            <a href="#contact" class="btn btn-outline btn-full">Je commence</a>
+          </div>
+          <div class="pricing-card pricing-card--featured reveal">
+            <div class="pricing-recommended" aria-label="Option recommandée">Recommandé</div>
+            <div class="pricing-name">Pack Standard</div>
+            <div class="pricing-price"><span class="pricing-amount">129€</span><span class="pricing-period">/mois</span></div>
+            <div class="pricing-install">+ 599€ d'installation</div>
+            <ul class="pricing-features" role="list">
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Tout le Pack Démarrage</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Chatbot IA conversationnel</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Personnalisation poussée</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Formation incluse</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Support direct (Conrad)</li>
+            </ul>
+            <a href="#contact" class="btn btn-primary btn-full">Je commence</a>
+          </div>
+          <div class="pricing-card reveal">
+            <div class="pricing-name">Pack Complet</div>
+            <div class="pricing-price"><span class="pricing-amount">149€</span><span class="pricing-period">/mois</span></div>
+            <div class="pricing-install">+ 799€ d'installation</div>
+            <ul class="pricing-features" role="list">
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Tout le Pack Standard</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Carte de fidélité digitale</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Site vitrine refondu (option)</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Formation incluse</li>
+              <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Support direct (Conrad)</li>
+            </ul>
+            <a href="#contact" class="btn btn-outline btn-full">Je commence</a>
+          </div>
+        </div>
+        <p class="pricing-note">Sans engagement. Résiliable à la fin de n'importe quel mois.</p>
+      </div>
+    </section>
+
+    <!-- DÉMOS -->
+    <section class="demos" id="demos" aria-labelledby="demos-title">
+      <div class="container">
+        <h2 class="section-title" id="demos-title">Testez par vous-même, sans inscription.</h2>
+        <p class="section-subtitle">Démos basées sur un restaurant fictif "Le Gourmet" à Épinal. Le rendu sera entièrement personnalisé pour votre établissement.</p>
+        <div class="demos-grid">
+          <a href="https://conconchanel0-ai.github.io/restaurant-demo/" target="_blank" rel="noopener noreferrer" class="demo-card reveal" aria-label="Démo site restaurant avec chatbot (nouvelle fenêtre)">
+            <div class="demo-preview" aria-hidden="true">
+              <div class="demo-preview-browser"><div class="demo-preview-dots"><span></span><span></span><span></span></div></div>
+              <div class="demo-preview-body restaurant">
+                <div class="demo-preview-hero-bar"></div>
+                <div class="demo-preview-content-lines"><div class="demo-line w80"></div><div class="demo-line w60"></div></div>
+                <div class="demo-preview-btn-mock"></div>
+                <div class="demo-chat-bubble">Bonjour, comment puis-je vous aider ?</div>
+              </div>
+            </div>
+            <div class="demo-info">
+              <h3>Site restaurant + chatbot</h3>
+              <p>Ce que voient vos clients. Réservation en ligne, chatbot IA, menu.</p>
+              <span class="demo-cta">Ouvrir la démo <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+            </div>
+          </a>
+          <a href="https://conconchanel0-ai.github.io/admin-demo/" target="_blank" rel="noopener noreferrer" class="demo-card reveal" aria-label="Démo tableau de bord patron (nouvelle fenêtre)">
+            <div class="demo-preview" aria-hidden="true">
+              <div class="demo-preview-browser dark"><div class="demo-preview-dots"><span></span><span></span><span></span></div></div>
+              <div class="demo-preview-body admin">
+                <div class="demo-admin-sidebar"><div class="demo-admin-item active"></div><div class="demo-admin-item"></div><div class="demo-admin-item"></div></div>
+                <div class="demo-admin-content"><div class="demo-admin-stats"><div class="demo-admin-stat"></div><div class="demo-admin-stat"></div><div class="demo-admin-stat accent"></div></div><div class="demo-admin-row"></div><div class="demo-admin-row"></div></div>
+              </div>
+            </div>
+            <div class="demo-info">
+              <h3>Tableau de bord patron</h3>
+              <p>Votre espace de gestion. Réservations en temps réel, tables, liste d'attente.</p>
+              <span class="demo-pw-badge">Mot de passe : demo2026</span>
+              <span class="demo-cta">Ouvrir la démo <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+            </div>
+          </a>
+          <a href="https://conconchanel0-ai.github.io/fidelite-demo/" target="_blank" rel="noopener noreferrer" class="demo-card reveal" aria-label="Démo carte de fidélité (nouvelle fenêtre)">
+            <div class="demo-preview" aria-hidden="true">
+              <div class="demo-preview-browser"><div class="demo-preview-dots"><span></span><span></span><span></span></div></div>
+              <div class="demo-preview-body fidelite">
+                <div class="demo-fidelite-card">
+                  <div class="demo-fidelite-title"></div>
+                  <div class="demo-stamps"><span class="stamp filled"></span><span class="stamp filled"></span><span class="stamp filled"></span><span class="stamp filled"></span><span class="stamp filled"></span><span class="stamp"></span><span class="stamp"></span><span class="stamp"></span><span class="stamp"></span><span class="stamp reward">★</span></div>
+                  <div class="demo-fidelite-sub"></div>
+                </div>
+              </div>
+            </div>
+            <div class="demo-info">
+              <h3>Carte de fidélité client</h3>
+              <p>Ce que vos clients reçoivent. QR code, sans appli à télécharger.</p>
+              <span class="demo-cta">Ouvrir la démo <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIMELINE -->
+    <section class="timeline-section" id="comment" aria-labelledby="timeline-title">
+      <div class="container">
+        <h2 class="section-title" id="timeline-title">Comment ça se passe ?</h2>
+        <p class="section-subtitle">De la première prise de contact à la mise en ligne : tout en moins d'une semaine.</p>
+        <div class="timeline">
+          <div class="timeline-step reveal"><div class="timeline-num" aria-hidden="true">1</div><div class="timeline-content"><h3>Premier contact</h3><p>On échange 15 min, par téléphone ou en personne. Sans engagement, sans blabla commercial.</p></div></div>
+          <div class="timeline-step reveal"><div class="timeline-num" aria-hidden="true">2</div><div class="timeline-content"><h3>Audit gratuit</h3><p>Je viens dans votre restaurant. On parle de vos vraies douleurs, pas d'un pitch générique.</p></div></div>
+          <div class="timeline-step reveal"><div class="timeline-num" aria-hidden="true">3</div><div class="timeline-content"><h3>Devis sur mesure</h3><p>Je vous propose le pack adapté à votre situation. Vous décidez librement.</p></div></div>
+          <div class="timeline-step reveal"><div class="timeline-num" aria-hidden="true">4</div><div class="timeline-content"><h3>Installation en 48h</h3><p>Tout est en ligne, vous êtes formé. On vérifie ensemble que tout fonctionne parfaitement.</p></div></div>
+          <div class="timeline-step reveal"><div class="timeline-num" aria-hidden="true">5</div><div class="timeline-content"><h3>Suivi continu</h3><p>Modifications gratuites le premier mois. Et après, vous m'appelez directement.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- À PROPOS -->
+    <section class="about" id="a-propos" aria-labelledby="about-title">
+      <div class="container">
+        <div class="about-inner reveal">
+          <div class="about-avatar" aria-hidden="true">C</div>
+          <div class="about-content">
+            <h2 id="about-title">Un projet local, par un Vosgien.</h2>
+            <blockquote class="about-quote">Je m'appelle Conrad, j'ai 16 ans, je vis à Épinal. J'ai créé Assistly parce que les restaurateurs locaux que j'ai rencontrés étaient écrasés par les commissions des géants du secteur ou bloqués sur des carnets papier. Mon objectif : leur donner les mêmes outils que les chaînes, sans les coûts ni la complexité. Présence physique, support direct, pas de hotline indienne.</blockquote>
+            <div class="about-tags" role="list">
+              <span class="about-tag" role="listitem">Épinal, Vosges</span>
+              <span class="about-tag" role="listitem">Présence locale</span>
+              <span class="about-tag" role="listitem">Support direct</span>
+              <span class="about-tag" role="listitem">Pas de hotline</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq" aria-labelledby="faq-title">
+      <div class="container">
+        <h2 class="section-title" id="faq-title">Questions fréquentes</h2>
+        <div class="faq-list">
+          <div class="faq-item reveal"><button class="faq-question" aria-expanded="false" aria-controls="faq-a1" id="faq-q1">Combien de temps pour installer ?<svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer" id="faq-a1" role="region" aria-labelledby="faq-q1" hidden><p>48h ouvrées entre le contrat signé et la mise en ligne.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-question" aria-expanded="false" aria-controls="faq-a2" id="faq-q2">Est-ce que je dois changer mon site actuel ?<svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer" id="faq-a2" role="region" aria-labelledby="faq-q2" hidden><p>Non. Assistly s'intègre à votre site existant, ou on en crée un nouveau si vous le souhaitez.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-question" aria-expanded="false" aria-controls="faq-a3" id="faq-q3">Y a-t-il un engagement ?<svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer" id="faq-a3" role="region" aria-labelledby="faq-q3" hidden><p>Aucun. Vous pouvez arrêter à la fin de n'importe quel mois.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-question" aria-expanded="false" aria-controls="faq-a4" id="faq-q4">Et si mes clients ne savent pas se servir d'internet ?<svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer" id="faq-a4" role="region" aria-labelledby="faq-q4" hidden><p>Pas de problème. Vous continuez de prendre les réservations au téléphone et vous les ajoutez en 10 secondes dans le tableau de bord. Les deux modes coexistent parfaitement.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-question" aria-expanded="false" aria-controls="faq-a5" id="faq-q5">Mes données sont-elles protégées ?<svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer" id="faq-a5" role="region" aria-labelledby="faq-q5" hidden><p>Oui. Hébergement européen, conformité RGPD, aucune revente de données.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-question" aria-expanded="false" aria-controls="faq-a6" id="faq-q6">Que se passe-t-il si j'ai un bug ou une question ?<svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer" id="faq-a6" role="region" aria-labelledby="faq-q6" hidden><p>Vous m'appelez ou m'envoyez un message. Je suis basé à Épinal, je peux passer si besoin.</p></div></div>
+          <div class="faq-item reveal"><button class="faq-question" aria-expanded="false" aria-controls="faq-a7" id="faq-q7">Pourquoi 16 ans, c'est sérieux ?<svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-answer" id="faq-a7" role="region" aria-labelledby="faq-q7" hidden><p>Mon âge est un atout : disponibilité totale, prix bas, et chaque client compte vraiment pour moi. Vous ne serez pas un numéro de dossier.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact" aria-labelledby="contact-title">
+      <div class="container">
+        <div class="contact-inner">
+          <div class="contact-intro reveal">
+            <h2 id="contact-title">Discutons de votre restaurant.</h2>
+            <p class="contact-lead">Pas de pitch. Pas de démo forcée. Une vraie conversation sur ce dont vous avez besoin.</p>
+            <div class="contact-channels">
+              <div class="contact-channel">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.59 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <a href="tel:0673322061">06 73 32 20 61</a>
+              </div>
+              <div class="contact-channel">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <a href="mailto:conradchanel@gmail.com">conradchanel@gmail.com</a>
+              </div>
+              <div class="contact-channel">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span>Épinal et Vosges environnantes</span>
+              </div>
+            </div>
+            <p class="contact-reassurance">Réponse sous 24h ouvrées. Pas de spam, jamais.</p>
+          </div>
+
+          <form class="contact-form reveal" id="contact-form" novalidate aria-label="Formulaire de prise de rendez-vous">
+            <div class="form-group">
+              <label for="f-restaurant">Nom du restaurant <abbr title="obligatoire">*</abbr></label>
+              <input type="text" id="f-restaurant" name="restaurant" required autocomplete="organization" placeholder="La Brasserie du Centre">
+              <span class="form-error" id="err-restaurant" role="alert" aria-live="polite"></span>
+            </div>
+            <div class="form-group">
+              <label for="f-name">Votre nom <abbr title="obligatoire">*</abbr></label>
+              <input type="text" id="f-name" name="name" required autocomplete="name" placeholder="Jean Dupont">
+              <span class="form-error" id="err-name" role="alert" aria-live="polite"></span>
+            </div>
+            <div class="form-group">
+              <label for="f-phone">Téléphone <abbr title="obligatoire">*</abbr></label>
+              <input type="tel" id="f-phone" name="phone" required autocomplete="tel" placeholder="06 XX XX XX XX">
+              <span class="form-error" id="err-phone" role="alert" aria-live="polite"></span>
+            </div>
+            <div class="form-group">
+              <label for="f-email">Email <span class="form-optional">(optionnel)</span></label>
+              <input type="email" id="f-email" name="email" autocomplete="email" placeholder="jean@monresto.fr">
+            </div>
+            <div class="form-group">
+              <label for="f-message">Message <span class="form-optional">(optionnel)</span></label>
+              <textarea id="f-message" name="message" rows="3" placeholder="Parlez-moi de votre restaurant, ce qui vous pose problème..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Demander un rendez-vous</button>
+            <p class="form-reassurance">Réponse sous 24h ouvrées. Sans engagement.</p>
+          </form>
+
+          <div class="contact-success" id="contact-success" hidden aria-live="polite">
+            <div class="contact-success-icon" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <h3>Message envoyé !</h3>
+            <p>Je vous réponds dans les 24h. À très vite.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span class="logo-mark" aria-hidden="true"></span>
+          <span class="logo-text">Assistly</span>
+          <p>Suite digitale pour restaurants des Vosges.</p>
+        </div>
+        <nav class="footer-nav" aria-label="Navigation pied de page">
+          <a href="#solution">Solution</a>
+          <a href="#tarifs">Tarifs</a>
+          <a href="#demos">Démos</a>
+          <a href="#faq">FAQ</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Assistly &mdash; Épinal, Vosges</p>
+        <div class="footer-legal-links">
+          <a href="#">Mentions légales</a>
+          <a href="#">Confidentialité</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+<script>
+'use strict';
+
+(function initNav() {
+  const toggle = document.querySelector('.nav-toggle');
+  const menu = document.getElementById('nav-menu');
+  const wrapper = document.querySelector('.nav-wrapper');
+  if (!toggle || !menu) return;
+  toggle.addEventListener('click', () => {
+    const isOpen = menu.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(isOpen));
+  });
+  menu.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      menu.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+  document.addEventListener('click', e => {
+    if (!wrapper.contains(e.target) && menu.classList.contains('open')) {
+      menu.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+  const sentinel = document.getElementById('hero');
+  if (sentinel) {
+    new IntersectionObserver(([entry]) => wrapper.classList.toggle('scrolled', !entry.isIntersecting), { threshold: 0, rootMargin: '-64px 0px 0px 0px' }).observe(sentinel);
+  }
+})();
+
+(function initFaq() {
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const answer = document.getElementById(btn.getAttribute('aria-controls'));
+      if (!item || !answer) return;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(o => {
+        o.classList.remove('open');
+        o.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+        const a = o.querySelector('.faq-answer');
+        if (a) a.hidden = true;
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        answer.hidden = false;
+      }
+    });
+  });
+})();
+
+(function initReveal() {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    return;
+  }
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const siblings = Array.from(entry.target.parentElement.querySelectorAll('.reveal:not(.visible)'));
+      const idx = siblings.indexOf(entry.target);
+      setTimeout(() => entry.target.classList.add('visible'), Math.min(idx * 80, 300));
+      obs.unobserve(entry.target);
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+})();
+
+(function initForm() {
+  const form = document.getElementById('contact-form');
+  const success = document.getElementById('contact-success');
+  if (!form) return;
+
+  // ── Remplace ceci par l'ID Formspree de Conrad ──
+  const FORMSPREE_ID = 'mnjwoogb';
+  // ────────────────────────────────────────────────
+
+  // Formatage automatique du téléphone → XX-XX-XX-XX-XX
+  const phoneInput = document.getElementById('f-phone');
+  if (phoneInput) {
+    phoneInput.addEventListener('input', function(e) {
+      const digits = this.value.replace(/\D/g, '').slice(0, 10);
+      let formatted = '';
+      for (let i = 0; i < digits.length; i++) {
+        if (i > 0 && i % 2 === 0) formatted += '-';
+        formatted += digits[i];
+      }
+      this.value = formatted;
+    });
+  }
+
+  function showErr(inputId, errId, msg) {
+    const input = document.getElementById(inputId);
+    const err = document.getElementById(errId);
+    if (!input || !err) return;
+    input.classList.add('error');
+    err.textContent = msg;
+    input.setAttribute('aria-invalid', 'true');
+  }
+  function clearErr(inputId, errId) {
+    const input = document.getElementById(inputId);
+    const err = document.getElementById(errId);
+    if (!input || !err) return;
+    input.classList.remove('error');
+    err.textContent = '';
+    input.removeAttribute('aria-invalid');
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    let valid = true;
+
+    const resto = document.getElementById('f-restaurant');
+    if (!resto.value.trim()) { showErr('f-restaurant', 'err-restaurant', 'Le nom du restaurant est requis.'); valid = false; } else { clearErr('f-restaurant', 'err-restaurant'); }
+
+    const name = document.getElementById('f-name');
+    if (!name.value.trim()) { showErr('f-name', 'err-name', 'Votre nom est requis.'); valid = false; } else { clearErr('f-name', 'err-name'); }
+
+    const phone = document.getElementById('f-phone');
+    const pv = phone.value.trim().replace(/[\s-]/g, '');
+    if (!pv) { showErr('f-phone', 'err-phone', 'Le téléphone est requis.'); valid = false; }
+    else if (!/^(\+33|0)[1-9]\d{8}$/.test(pv)) { showErr('f-phone', 'err-phone', 'Numéro invalide. Exemple : 06-12-34-56-78'); valid = false; }
+    else { clearErr('f-phone', 'err-phone'); }
+
+    if (!valid) { const first = form.querySelector('[aria-invalid="true"]'); if (first) first.focus(); return; }
+
+    const data = {
+      Restaurant: resto.value.trim(),
+      Nom: name.value.trim(),
+      Téléphone: phone.value.trim(),
+      Email: document.getElementById('f-email').value.trim() || '—',
+      Message: document.getElementById('f-message').value.trim() || '—',
+    };
+
+    if (FORMSPREE_ID !== 'VOTRE_ID') {
+      try {
+        const res = await fetch('https://formspree.io/f/' + FORMSPREE_ID, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error('Formspree error');
+      } catch(_) {
+        alert('Erreur d\'envoi. Appelez directement le 06 73 32 20 61.');
+        return;
+      }
+    }
+
+    // Sauvegarde locale en plus
+    try {
+      const leads = JSON.parse(localStorage.getItem('assistly_leads') || '[]');
+      leads.push({ ...data, at: new Date().toISOString() });
+      localStorage.setItem('assistly_leads', JSON.stringify(leads));
+    } catch(_) {}
+
+    form.hidden = true;
+    if (success) { success.hidden = false; success.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  });
+})();
+</script>
+</body>
+</html>
