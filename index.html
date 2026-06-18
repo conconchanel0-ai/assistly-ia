@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<!--
+  =============================================================================
+  Pivau — Assistant téléphonique IA pour syndics de copropriété
+  FICHIER UNIQUE AUTONOME : HTML + CSS + JS réunis dans une seule page.
+  Aucune dépendance externe — déployable tel quel (GitHub Pages, ou en local
+  par simple double-clic).
+
+  ► Pages légales incluses dans ce même fichier sous forme de « vues »
+    (accueil / mentions légales / politique de confidentialité), gérées par un
+    mini-routeur JavaScript via l'ancre d'URL (#mentions-legales, etc.).
+    Le passage vers une vue légale TÉLÉPORTE (pas de défilement animé).
+
+  ► Tarif : 150 €/mois · Formulaire : Formspree (xojrpplv) · Numéro de démo :
+    à ajouter plus tard (aucun numéro affiché pour l'instant).
+  =============================================================================
+-->
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Pivau — L'assistant téléphonique IA des syndics indépendants</title>
+  <meta name="description" content="Un assistant téléphonique en français qui décroche 24/7 pour votre cabinet de syndic, trie les urgences et vous envoie un récapitulatif de chaque appel. Vous gardez la relation, il prend le standard." />
+  <meta name="theme-color" content="#084729" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Pivau — L'assistant téléphonique IA des syndics" />
+  <meta property="og:description" content="Décroche 24/7, trie les urgences, vous envoie un récap de chaque appel. Conçu pour les syndics indépendants." />
+  <meta property="og:locale" content="fr_FR" />
+
+  <!-- Favicon embarqué (data URI, aucun fichier externe) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMwODQ3MjkiLz48dGV4dCB4PSIzMyIgeT0iMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJjZW50cmFsIiBmb250LWZhbWlseT0iR2VvcmdpYSwnVGltZXMgTmV3IFJvbWFuJyxzZXJpZiIgZm9udC13ZWlnaHQ9IjcwMCIgZm9udC1zaXplPSI0OCIgZmlsbD0iI2ZmZmZmZiI+UDwvdGV4dD48L3N2Zz4K" />
+
+  <!-- =========================================================================
+       STYLES — intégrés ici
+       ====================================================================== -->
+  <style>
+  /* 1. VARIABLES — palette Pivau ------------------------------------------- */
+  :root {
+    /* Couleurs de marque */
+    --ink:   #121112;   /* presque noir — titres & fonds sombres        */
+    --green: #084729;   /* vert profond — couleur primaire de marque    */
+    --mist:  #DFE7DF;   /* vert très clair — fonds doux                 */
+    --white: #ffffff;
+
+    /* Accent « terre cuite » (remplace l'ancien jaune) */
+    --accent:        #C75D43;  /* boutons & éléments qui ressortent      */
+    --accent-strong: #AE4A33;  /* survol des boutons d'accent            */
+    --accent-soft:   #E6A38F;  /* tint clair, lisible sur fonds sombres  */
+
+    /* Déclinaisons (alphas, pour textes & bordures) */
+    --text:      rgba(18,17,18,.80);
+    --text-soft: rgba(18,17,18,.58);
+    --text-mute: rgba(18,17,18,.42);
+    --line:      rgba(8,71,41,.16);
+    --line-soft: rgba(18,17,18,.10);
+    --green-700: #0a5733;          /* dérivé vert pour dégradés           */
+
+    /* Alias de compatibilité (anciennes teintes retirées) */
+    --lime:     var(--accent);
+    --lime-ink: var(--text-mute);
+    --grape:    var(--accent);
+
+    --radius-sm: 8px; --radius: 14px; --radius-lg: 20px; --radius-pill: 999px;
+    --shadow-sm: 0 1px 2px rgba(18,17,18,.06), 0 1px 3px rgba(18,17,18,.05);
+    --shadow: 0 4px 12px rgba(18,17,18,.07), 0 2px 4px rgba(18,17,18,.05);
+    --shadow-lg: 0 18px 40px rgba(8,71,41,.16), 0 6px 14px rgba(8,71,41,.10);
+    --container: 1140px; --container-narrow: 760px; --transition: .2s ease;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  }
+
+  /* 2. RESET & BASE -------------------------------------------------------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; font-family: var(--font); font-size: 1.0625rem; line-height: 1.65;
+    color: var(--text); background: var(--white);
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 { color: var(--ink); line-height: 1.2; margin: 0 0 .5em; font-weight: 700; letter-spacing: -0.015em; }
+  p { margin: 0 0 1rem; } p:last-child { margin-bottom: 0; }
+  a { color: var(--green); text-decoration: none; transition: color var(--transition); }
+  a:hover { color: var(--grape); }
+  img, svg { max-width: 100%; }
+  ul { margin: 0; padding: 0; list-style: none; }
+  strong { color: var(--ink); font-weight: 600; }
+  :focus-visible { outline: 3px solid var(--grape); outline-offset: 2px; border-radius: 4px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  .skip-link { position: absolute; left: 50%; top: -60px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: .6rem 1.1rem; border-radius: var(--radius-sm); z-index: 1000; transition: top var(--transition); }
+  .skip-link:focus { top: .6rem; color: #fff; }
+
+  /* 3. LAYOUT -------------------------------------------------------------- */
+  .container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: 1.25rem; }
+  .container--narrow { max-width: var(--container-narrow); }
+  .section { padding-block: clamp(3.5rem, 8vw, 6rem); }
+  .section--alt { background: var(--mist); }
+  [id] { scroll-margin-top: 88px; }
+  .section__head { max-width: 720px; margin: 0 auto clamp(2rem, 5vw, 3.25rem); text-align: center; }
+  .section__title { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+  .section__subtitle { font-size: 1.125rem; color: var(--text-soft); margin-top: .75rem; }
+  .eyebrow { display: inline-block; font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--green); margin: 0 0 .85rem; }
+  .eyebrow--light { color: var(--accent-soft); }
+  .grid { display: grid; gap: 1.25rem; }
+  .grid--2, .grid--3, .grid--4 { grid-template-columns: 1fr; }
+
+  /* 4. BOUTONS ------------------------------------------------------------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+    font-family: inherit; font-size: 1rem; font-weight: 600; line-height: 1.2;
+    padding: .8rem 1.35rem; border-radius: var(--radius-pill); border: 2px solid transparent;
+    cursor: pointer; text-align: center;
+    transition: background var(--transition), color var(--transition), border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+  }
+  .btn:hover { transform: translateY(-1px); } .btn:active { transform: translateY(0); }
+  .btn__icon { width: 1.15em; height: 1.15em; flex-shrink: 0; }
+  /* primaire = vert profond */
+  .btn--primary { background: var(--green); color: #fff; box-shadow: 0 6px 16px rgba(8,71,41,.28); }
+  .btn--primary:hover { background: var(--ink); color: #fff; box-shadow: 0 8px 20px rgba(8,71,41,.34); }
+  /* accent = terre cuite (CTA qui ressort) */
+  .btn--accent { background: var(--accent); color: #fff; box-shadow: 0 8px 22px rgba(199,93,67,.38); }
+  .btn--accent:hover { background: var(--accent-strong); color: #fff; box-shadow: 0 10px 26px rgba(199,93,67,.48); }
+  .btn--ghost { background: transparent; color: var(--green); border-color: var(--line); }
+  .btn--ghost:hover { border-color: var(--green); color: var(--green); background: var(--white); }
+  .btn--ghost-ondark { color: #fff; border-color: rgba(255,255,255,.4); }
+  .btn--ghost-ondark:hover { color: #fff; border-color: #fff; background: rgba(255,255,255,.10); }
+  .btn--lg { padding: 1rem 1.6rem; font-size: 1.05rem; }
+  .btn--block { width: 100%; }
+
+  /* 5. EN-TÊTE / NAV ------------------------------------------------------- */
+  .site-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,.9); backdrop-filter: saturate(180%) blur(12px); -webkit-backdrop-filter: saturate(180%) blur(12px); border-bottom: 1px solid var(--line); transition: box-shadow var(--transition); }
+  .site-header.is-scrolled { box-shadow: var(--shadow-sm); }
+  .site-header__inner { display: flex; align-items: center; justify-content: space-between; min-height: 68px; gap: 1rem; }
+  .brand { display: inline-flex; align-items: center; gap: .6rem; color: var(--ink); font-weight: 700; font-size: 1.18rem; letter-spacing: -0.02em; }
+  .brand:hover { color: var(--ink); }
+  .brand__mark { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(140deg, var(--green-700), var(--green)); box-shadow: 0 4px 12px rgba(8,71,41,.25); }
+  .brand__mark svg { width: 26px; height: 26px; }
+  .nav__list { display: flex; align-items: center; gap: 1.5rem; }
+  .nav__link { color: var(--text); font-weight: 500; font-size: .98rem; }
+  .nav__link:hover { color: var(--green); }
+  .nav__phone { display: inline-flex; align-items: center; gap: .4rem; color: var(--green); font-weight: 700; font-size: .98rem; white-space: nowrap; }
+  .nav__phone svg { width: 17px; height: 17px; }
+  .nav__phone:hover { color: var(--accent); }
+  .nav__cta { font-size: .95rem; padding: .6rem 1.1rem; }
+  .nav-toggle { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 44px; height: 44px; padding: 0; background: transparent; border: 1px solid var(--line); border-radius: var(--radius-sm); cursor: pointer; }
+  .nav-toggle__bar { display: block; width: 22px; height: 2px; margin-inline: auto; background: var(--ink); border-radius: 2px; transition: transform var(--transition), opacity var(--transition); }
+  .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(2) { opacity: 0; }
+  .nav-toggle[aria-expanded="true"] .nav-toggle__bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* 6. HERO ---------------------------------------------------------------- */
+  .hero { position: relative; overflow: hidden; padding-block: clamp(3rem, 8vw, 5.5rem); background: radial-gradient(1100px 520px at 85% -10%, rgba(8,71,41,.10), transparent 60%), radial-gradient(900px 500px at 0% 0%, rgba(199,93,67,.08), transparent 55%), var(--white); }
+  .hero__inner { display: grid; grid-template-columns: 1fr; gap: clamp(2.5rem, 6vw, 4rem); align-items: center; }
+  .hero__title { font-size: clamp(2.1rem, 6vw, 3.4rem); letter-spacing: -0.03em; color: var(--ink); }
+  .hero__subtitle { font-size: clamp(1.1rem, 2.4vw, 1.3rem); color: var(--text-soft); max-width: 38ch; margin-bottom: 1.75rem; }
+  .hero__actions { display: flex; flex-wrap: wrap; gap: .85rem; margin-bottom: 1.1rem; }
+  .hero__reassurance { font-size: .95rem; color: var(--text-mute); margin: 0; }
+  .hero__visual { position: relative; display: flex; flex-direction: column; align-items: center; }
+  /* Maquette « message reçu » */
+  .msg { width: 100%; max-width: 380px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); overflow: hidden; }
+  .msg__head { display: flex; align-items: center; gap: .7rem; padding: .9rem 1.1rem; border-bottom: 1px solid var(--line-soft); }
+  .msg__avatar { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(140deg, var(--green-700), var(--green)); color: #fff; font-weight: 700; font-family: Georgia, "Times New Roman", serif; font-size: 1.15rem; flex-shrink: 0; }
+  .msg__id { margin-right: auto; }
+  .msg__from { margin: 0; font-weight: 700; color: var(--ink); font-size: .98rem; }
+  .msg__meta { margin: 0; font-size: .78rem; color: var(--text-mute); }
+  .badge { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: .28rem .6rem; border-radius: var(--radius-pill); }
+  .badge--urgent { background: rgba(199,93,67,.14); color: var(--accent-strong); }
+  .msg__bubble { padding: 1.1rem 1.15rem 1.25rem; }
+  .msg__line { font-size: .92rem; color: var(--text); margin: 0 0 .65rem; }
+  .msg__quote { font-style: italic; color: var(--text-soft); background: var(--mist); border-left: 3px solid var(--green); padding: .6rem .8rem; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; margin: 0 0 .95rem; font-size: .9rem; }
+  .msg__actions { display: grid; gap: .55rem; }
+  .msg__actions li { display: flex; align-items: flex-start; gap: .5rem; font-size: .9rem; color: var(--ink); font-weight: 500; }
+  .msg__actions svg { width: 17px; height: 17px; color: var(--green); flex-shrink: 0; margin-top: 2px; }
+  /* Bénéfices, sous le message */
+  .hero__benefits { display: grid; gap: .6rem; width: 100%; max-width: 380px; margin-top: 1.4rem; }
+  .hero__benefits li { display: flex; align-items: center; gap: .65rem; font-size: .98rem; font-weight: 500; color: var(--ink); }
+  .hero__benefits svg { width: 22px; height: 22px; color: var(--accent); flex-shrink: 0; }
+
+  /* 7. CARTES PROBLÈME ----------------------------------------------------- */
+  .card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.6rem 1.4rem; box-shadow: var(--shadow-sm); transition: transform var(--transition), box-shadow var(--transition); }
+  .card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .card__icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: var(--mist); color: var(--green); margin-bottom: 1rem; }
+  .card__icon svg { width: 24px; height: 24px; }
+  .card__title { font-size: 1.1rem; margin-bottom: .4rem; }
+  .card__text { font-size: .95rem; margin: 0; color: var(--text-soft); }
+
+  /* 8. ÉTAPES -------------------------------------------------------------- */
+  .steps { display: grid; grid-template-columns: 1fr; gap: 1.25rem; list-style: none; margin: 0; padding: 0; }
+  .step { position: relative; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 2rem 1.5rem 1.6rem; box-shadow: var(--shadow-sm); }
+  .step__num { position: absolute; top: -16px; left: 1.5rem; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--green); color: #fff; font-weight: 800; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(8,71,41,.28); }
+  .step__icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: var(--mist); color: var(--green); margin: .5rem 0 1rem; }
+  .step__icon svg { width: 26px; height: 26px; }
+  .step__title { font-size: 1.2rem; margin-bottom: .35rem; }
+  .step__text { font-size: .96rem; margin: 0; color: var(--text-soft); }
+
+  /* 9. DUO (fait / ne fait jamais) ----------------------------------------- */
+  .duo { display: grid; grid-template-columns: 1fr; gap: 1.25rem; max-width: 920px; margin-inline: auto; }
+  .duo__col { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.75rem 1.6rem; box-shadow: var(--shadow-sm); }
+  .duo__col--do { border-top: 4px solid var(--green); }
+  .duo__col--dont { border-top: 4px solid var(--text-mute); }
+  .duo__heading { display: flex; align-items: center; gap: .6rem; font-size: 1.25rem; margin-bottom: 1.1rem; }
+  .duo__col--do .duo__heading svg { color: var(--green); }
+  .duo__col--dont .duo__heading svg { color: var(--text-mute); }
+  .duo__heading svg { width: 24px; height: 24px; flex-shrink: 0; }
+  .duo__list { display: grid; gap: .8rem; }
+  .duo__list li { position: relative; padding-left: 1.6rem; font-size: .98rem; color: var(--text-soft); }
+  .duo__list li::before { content: ""; position: absolute; left: 0; top: .55em; width: 8px; height: 8px; border-radius: 50%; }
+  .duo__col--do .duo__list li::before { background: var(--green); }
+  .duo__col--dont .duo__list li::before { background: var(--text-mute); }
+
+  /* 10. DÉMO --------------------------------------------------------------- */
+  .demo { display: grid; grid-template-columns: 1fr; gap: 1.75rem; align-items: center; background: radial-gradient(700px 400px at 100% 0%, rgba(8,71,41,.55), transparent 60%), var(--ink); color: rgba(255,255,255,.82); border-radius: var(--radius-lg); padding: clamp(2rem, 5vw, 3.25rem); box-shadow: var(--shadow-lg); }
+  .demo__title { color: #fff; font-size: clamp(1.5rem, 3.5vw, 2.1rem); }
+  .demo__text { color: rgba(255,255,255,.78); font-size: 1.08rem; margin: 0; }
+  .demo__text strong { color: var(--accent-soft); }
+  .demo__phone { text-decoration: none; padding: 1.1rem 1.6rem; justify-self: start; }
+  .demo__phone-label { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2; }
+  .demo__phone-cta { font-size: .82rem; font-weight: 600; opacity: .85; }
+  .demo__phone-number { font-size: 1.35rem; font-weight: 700; letter-spacing: .01em; }
+
+  /* 11. COMPARATIF --------------------------------------------------------- */
+  .compare-card { display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.5rem 1.4rem; box-shadow: var(--shadow-sm); }
+  .compare-card--featured { border: 2px solid var(--green); box-shadow: var(--shadow-lg); position: relative; }
+  .compare-card__head { margin-bottom: 1.1rem; position: relative; }
+  .compare-card__badge { display: inline-block; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #fff; background: var(--accent); padding: .25rem .65rem; border-radius: var(--radius-pill); margin-bottom: .6rem; }
+  .compare-card__name { font-size: 1.2rem; margin: 0; }
+  .compare-card--featured .compare-card__name { color: var(--green); }
+  .compare-card__tag { font-size: .9rem; color: var(--text-soft); margin: .2rem 0 0; }
+  .compare-list { display: grid; gap: .9rem; }
+  .compare-list li { display: grid; gap: .15rem; }
+  .compare-list__crit { font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--text-mute); }
+  .compare-list__val { display: flex; align-items: flex-start; gap: .5rem; font-size: .95rem; color: var(--ink); font-weight: 500; }
+  .compare-list .ico { flex-shrink: 0; margin-top: 1px; }
+  .compare-list .ico svg { width: 18px; height: 18px; }
+  .compare-list .is-yes .ico, li.is-yes .ico { color: var(--green); }
+  .compare-list .is-no .ico, li.is-no .ico { color: var(--text-mute); }
+  .compare-list .is-mid .ico, li.is-mid .ico { color: var(--text-mute); }
+
+  /* 12. POUR QUI ----------------------------------------------------------- */
+  .section--accentband { background: var(--mist); }
+  .audience { max-width: 820px; margin-inline: auto; text-align: center; font-size: clamp(1.2rem, 3vw, 1.6rem); line-height: 1.5; color: var(--text-soft); font-weight: 500; }
+  .audience__lead { color: var(--green); font-weight: 700; }
+
+  /* 13. TARIFS ------------------------------------------------------------- */
+  .plan { position: relative; display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.85rem 1.6rem; box-shadow: var(--shadow-sm); }
+  .plan--featured { border: 2px solid var(--green); box-shadow: var(--shadow-lg); }
+  .plan__badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--lime); color: var(--ink); font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: .3rem .85rem; border-radius: var(--radius-pill); white-space: nowrap; }
+  .plan__name { font-size: 1.3rem; margin-bottom: .35rem; }
+  .plan__price { display: flex; align-items: baseline; margin: 0 0 .35rem; }
+  .plan__amount { font-size: 2.4rem; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
+  .plan__amount--text { font-size: 1.7rem; }
+  .plan__period { font-size: 1rem; color: var(--text-soft); font-weight: 500; }
+  .plan__desc { font-size: .95rem; color: var(--text-soft); margin-bottom: 1.25rem; }
+  .plan__features { display: grid; gap: .7rem; margin-bottom: 1.6rem; flex-grow: 1; }
+  .plan__features li { position: relative; padding-left: 1.7rem; font-size: .95rem; color: var(--text-soft); }
+  .plan__features li::before { content: ""; position: absolute; left: 0; top: .35em; width: 18px; height: 18px; background-repeat: no-repeat; background-position: center; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23084729' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E"); }
+  .plan__cta { width: 100%; margin-top: auto; }
+  .pricing-single { max-width: 460px; margin-inline: auto; }
+  .pricing__note { text-align: center; margin-top: 1.75rem; font-size: .95rem; color: var(--text-soft); }
+
+  /* 14. FAQ ---------------------------------------------------------------- */
+  .faq { display: grid; gap: .85rem; }
+  .faq__item { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; transition: box-shadow var(--transition), border-color var(--transition); }
+  .faq__item:has(.faq__trigger[aria-expanded="true"]) { border-color: var(--green); box-shadow: var(--shadow-sm); }
+  .faq__q { margin: 0; }
+  .faq__trigger { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; padding: 1.15rem 1.3rem; background: transparent; border: 0; cursor: pointer; font-family: inherit; font-size: 1.05rem; font-weight: 600; color: var(--ink); text-align: left; line-height: 1.4; }
+  .faq__chevron { width: 22px; height: 22px; color: var(--green); flex-shrink: 0; transition: transform var(--transition); }
+  .faq__trigger[aria-expanded="true"] .faq__chevron { transform: rotate(180deg); }
+  .faq__panel { max-height: 0; overflow: hidden; opacity: 0; transition: max-height .28s ease, opacity .28s ease, padding .28s ease; padding: 0 1.3rem; }
+  .faq__panel.is-open { max-height: 320px; opacity: 1; padding-bottom: 1.25rem; }
+  .faq__panel p { font-size: .98rem; color: var(--text-soft); margin: 0; }
+
+  /* 15. CONTACT ------------------------------------------------------------ */
+  .contact { background: radial-gradient(800px 460px at 0% 0%, rgba(8,71,41,.08), transparent 55%), radial-gradient(700px 420px at 100% 100%, rgba(199,93,67,.07), transparent 55%), var(--white); }
+  .contact__grid { display: grid; grid-template-columns: 1fr; gap: clamp(2rem, 5vw, 3.5rem); align-items: start; }
+  .contact__title { font-size: clamp(1.9rem, 4.5vw, 2.7rem); color: var(--green); letter-spacing: -0.03em; margin-bottom: .75rem; }
+  .contact__lead { font-size: 1.1rem; color: var(--text-soft); max-width: 40ch; margin-bottom: 1.75rem; }
+  .contact__phone { display: inline-flex; align-items: center; gap: .9rem; margin-bottom: 1.4rem; padding: .9rem 1.2rem; background: var(--mist); border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink); }
+  .contact__phone:hover { color: var(--ink); border-color: var(--green); }
+  .contact__ico--lg { width: 48px; height: 48px; background: var(--green); color: #fff; }
+  .contact__ico--lg svg { width: 24px; height: 24px; }
+  .contact__phone-text { display: flex; flex-direction: column; line-height: 1.15; }
+  .contact__phone-label { font-size: .82rem; font-weight: 600; color: var(--text-soft); }
+  .contact__phone-number { font-size: 1.65rem; font-weight: 800; color: var(--green); letter-spacing: .01em; }
+  .contact__info { display: grid; gap: 1.1rem; margin-bottom: 1.5rem; }
+  .contact__row { display: flex; align-items: center; gap: .85rem; font-size: 1.05rem; color: var(--ink); font-weight: 500; }
+  .contact__row a { color: var(--ink); font-weight: 500; }
+  .contact__row a:hover { color: var(--grape); }
+  .contact__ico { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--mist); color: var(--green); flex-shrink: 0; }
+  .contact__ico svg { width: 20px; height: 20px; }
+  .contact__fineprint { font-size: .92rem; color: var(--text-mute); margin: 0; }
+
+  .contact__form { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); padding: clamp(1.5rem, 4vw, 2.25rem); }
+  .field { margin-bottom: 1.1rem; }
+  .field__label { display: block; font-size: .92rem; font-weight: 600; color: var(--ink); margin-bottom: .45rem; }
+  .field__label .req { color: var(--grape); }
+  .field__label .opt { color: var(--text-mute); font-weight: 500; }
+  .field__input, .field__textarea {
+    width: 100%; font-family: inherit; font-size: 1rem; color: var(--ink);
+    padding: .8rem .95rem; background: var(--white);
+    border: 1.5px solid var(--line); border-radius: var(--radius); transition: border-color var(--transition), box-shadow var(--transition);
+  }
+  .field__input::placeholder, .field__textarea::placeholder { color: var(--text-mute); }
+  .field__input:focus, .field__textarea:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(8,71,41,.14); }
+  .field__textarea { resize: vertical; min-height: 110px; }
+  .form__submit { width: 100%; margin-top: .35rem; }
+  .form__note { text-align: center; font-size: .9rem; color: var(--text-mute); margin: .9rem 0 0; }
+  .form__status { margin: 0 0 1rem; padding: .8rem 1rem; border-radius: var(--radius); font-size: .95rem; font-weight: 500; }
+  .form__status.is-ok { background: rgba(8,71,41,.10); color: var(--green); }
+
+  /* 16. FOOTER ------------------------------------------------------------- */
+  .site-footer { background: var(--ink); color: rgba(255,255,255,.66); padding-top: clamp(2.5rem, 6vw, 3.5rem); }
+  .site-footer__inner { display: grid; grid-template-columns: 1fr; gap: 1.75rem; padding-bottom: 2rem; }
+  .brand--footer { color: #fff; margin-bottom: .85rem; }
+  .brand--footer:hover { color: #fff; } .brand--footer .brand__name { color: #fff; }
+  .site-footer__tagline { max-width: 42ch; font-size: .95rem; color: rgba(255,255,255,.55); margin: 0; }
+  .site-footer__links { display: flex; flex-wrap: wrap; gap: 1rem 1.6rem; align-items: flex-start; }
+  .site-footer__links a { color: rgba(255,255,255,.78); font-size: .95rem; }
+  .site-footer__links a:hover { color: var(--lime); }
+  .site-footer__legal { border-top: 1px solid rgba(255,255,255,.12); padding-block: 1.4rem; }
+  .site-footer__legal p { font-size: .85rem; color: rgba(255,255,255,.5); margin: 0; }
+  .site-footer__legal a { color: rgba(255,255,255,.78); }
+  .site-footer__legal a:hover { color: var(--lime); }
+
+  /* 17. PAGES LÉGALES (vues) — registre formel, palette neutre -------------
+     Volontairement plus sobre que le reste du site : fond clair, gris
+     d'encre, filet vert discret. On reste « Pivau » (même logo, même filet
+     vert) mais l'ambiance est documentaire. Aucune teinte lime / magenta.   */
+  .legal-bg { background: #f4f5f4; }
+  .legal { padding-block: clamp(2.5rem, 6vw, 4rem); }
+  .legal__doc {
+    max-width: var(--container-narrow); margin-inline: auto; background: #fff;
+    border: 1px solid #e3e6e3; border-top: 4px solid var(--green);
+    border-radius: var(--radius); box-shadow: var(--shadow-sm);
+    padding: clamp(1.75rem, 5vw, 3.25rem);
+  }
+  .legal__back { display: inline-flex; align-items: center; gap: .4rem; font-size: .92rem; font-weight: 600; margin-bottom: 1.75rem; background: none; border: 0; font-family: inherit; cursor: pointer; color: var(--green); padding: 0; }
+  .legal__back:hover { color: var(--ink); }
+  .legal h1 { font-size: clamp(1.7rem, 5vw, 2.3rem); color: var(--ink); margin-bottom: .3rem; letter-spacing: -0.02em; }
+  .legal__updated { color: #6b716b; font-size: .9rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #e3e6e3; }
+  .legal__intro { color: #3c413c; }
+  .legal h2 { font-size: 1.18rem; color: var(--ink); margin-top: 2.25rem; margin-bottom: .6rem; display: flex; align-items: baseline; gap: .55rem; }
+  .legal h2 .legal__num { display: inline-flex; align-items: center; justify-content: center; min-width: 1.7rem; height: 1.7rem; padding: 0 .4rem; font-size: .8rem; font-weight: 700; color: var(--green); background: rgba(8,71,41,.08); border-radius: var(--radius-sm); flex-shrink: 0; }
+  .legal h3 { font-size: 1.02rem; color: var(--ink); margin-top: 1.5rem; }
+  .legal p, .legal li { color: #3c413c; }
+  .legal p { font-size: 1rem; }
+  .legal ul { list-style: none; padding-left: 0; margin: 0 0 1rem; display: grid; gap: .5rem; }
+  .legal ul li { position: relative; padding-left: 1.4rem; }
+  .legal ul li::before { content: ""; position: absolute; left: .15rem; top: .65em; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+  .legal address { font-style: normal; background: #f4f5f4; border: 1px solid #e3e6e3; border-radius: var(--radius); padding: 1rem 1.25rem; color: #3c413c; }
+  .legal address a { color: var(--green); }
+  .legal__table { width: 100%; border-collapse: collapse; margin: .25rem 0 1rem; font-size: .95rem; }
+  .legal__table th, .legal__table td { text-align: left; padding: .7rem .85rem; border: 1px solid #e3e6e3; vertical-align: top; color: #3c413c; }
+  .legal__table th { background: #f4f5f4; color: var(--ink); font-weight: 700; font-size: .85rem; }
+  .legal__table caption { text-align: left; font-weight: 600; color: var(--ink); margin-bottom: .5rem; }
+  .legal__wrap { overflow-x: auto; }
+
+  /* En-tête légèrement plus « solide » sur les sous-pages */
+  body.is-legal .site-header { background: #fff; }
+
+  /* 18. APPARITION AU SCROLL ----------------------------------------------- */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; will-change: opacity, transform; }
+  .reveal.is-visible { opacity: 1; transform: none; }
+
+  /* 19. RESPONSIVE --------------------------------------------------------- */
+  @media (min-width: 640px) {
+    .grid--2 { grid-template-columns: repeat(2, 1fr); }
+    .duo { grid-template-columns: repeat(2, 1fr); }
+    .hero__actions .btn { flex: 0 1 auto; }
+  }
+  @media (min-width: 768px) {
+    .grid--3 { grid-template-columns: repeat(3, 1fr); }
+    .grid--4 { grid-template-columns: repeat(2, 1fr); }
+    .steps { grid-template-columns: repeat(3, 1fr); }
+    .demo { grid-template-columns: 1.4fr 1fr; }
+    .demo__phone { justify-self: end; }
+    .contact__grid { grid-template-columns: 1fr 1fr; gap: clamp(2rem, 4vw, 4rem); }
+  }
+  @media (min-width: 992px) {
+    .grid--4 { grid-template-columns: repeat(4, 1fr); }
+    .hero__inner { grid-template-columns: 1.1fr .9fr; }
+    .hero__subtitle { max-width: 42ch; }
+    .hero__chip { display: block; }
+    .site-footer__inner { grid-template-columns: 1.5fr 1fr; align-items: start; }
+    .site-footer__links { justify-content: flex-end; }
+  }
+  @media (max-width: 860px) {
+    .nav-toggle { display: flex; }
+    .nav { position: fixed; inset: 68px 0 auto 0; background: var(--white); border-bottom: 1px solid var(--line); box-shadow: var(--shadow-lg); max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+    .nav.is-open { max-height: 80vh; overflow-y: auto; }
+    .nav__list { flex-direction: column; align-items: stretch; gap: 0; padding: .5rem 1.25rem 1.25rem; }
+    .nav__list li { border-bottom: 1px solid var(--line-soft); }
+    .nav__list li:last-child { border-bottom: 0; padding-top: .9rem; }
+    .nav__link { display: block; padding: .9rem .25rem; font-size: 1.05rem; }
+    .nav__cta { width: 100%; }
+  }
+
+  /* 20. MOUVEMENT RÉDUIT --------------------------------------------------- */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+    .reveal { opacity: 1; transform: none; }
+    .btn:hover { transform: none; }
+  }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#contenu">Aller au contenu principal</a>
+
+  <!-- =========================================================================
+       LOGO PIVAU — source unique (symbole SVG réutilisé en en-tête & footer)
+       « p » dont la boucle est une flèche circulaire (rappel/récurrence) et
+       dont le pied se prolonge en combiné téléphonique.
+       ====================================================================== -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="pivau-mark" viewBox="0 0 64 64">
+      <!-- « P » typographique, empattements élégants -->
+      <text x="33" y="35" text-anchor="middle" dominant-baseline="central"
+            font-family="Georgia, 'Times New Roman', 'Playfair Display', serif"
+            font-weight="700" font-size="48" fill="#ffffff">P</text>
+    </symbol>
+  </svg>
+
+  <!-- =========================================================================
+       EN-TÊTE / NAVIGATION (commun à toutes les vues)
+       ====================================================================== -->
+  <header class="site-header" id="haut">
+    <div class="container site-header__inner">
+      <a class="brand" href="#accueil" aria-label="Pivau, retour en haut de page">
+        <span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 64 64"><use href="#pivau-mark"/></svg></span>
+        <span class="brand__name">Pivau</span>
+      </a>
+
+      <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu-principal">
+        <span class="nav-toggle__bar"></span><span class="nav-toggle__bar"></span><span class="nav-toggle__bar"></span>
+      </button>
+
+      <nav class="nav" id="menu-principal" aria-label="Navigation principale">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="#probleme">Le problème</a></li>
+          <li><a class="nav__link" href="#fonctionnement">Comment ça marche</a></li>
+          <li><a class="nav__link" href="#tarifs">Tarifs</a></li>
+          <li><a class="nav__link" href="#faq">FAQ</a></li>
+          <li><a class="nav__phone" href="tel:+33673322061"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>06 73 32 20 61</a></li>
+          <li><a class="btn btn--primary nav__cta" href="#contact">Me contacter</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenu">
+
+    <!-- =====================================================================
+         VUE 1 — ACCUEIL (landing)
+         ================================================================== -->
+    <div id="view-accueil">
+
+      <!-- HERO -->
+      <section class="hero">
+        <div class="container hero__inner">
+          <div class="hero__content reveal">
+            <p class="eyebrow">Assistant téléphonique IA · Syndics de copropriété</p>
+            <h1 class="hero__title">Votre cabinet ne rate plus jamais un appel de copropriétaire.</h1>
+            <p class="hero__subtitle">Un assistant téléphonique en français qui décroche 24/7, trie les urgences et vous envoie un récap de chaque appel. Vous gardez la relation, il prend le standard.</p>
+            <div class="hero__actions">
+              <a class="btn btn--accent btn--lg" href="#contact">Demander un rendez-vous</a>
+              <a class="btn btn--ghost btn--lg" href="#fonctionnement">Voir comment ça marche</a>
+            </div>
+            <p class="hero__reassurance">Conçu pour les syndics indépendants. Sans embauche, sans changer vos outils.</p>
+          </div>
+
+          <div class="hero__visual" aria-hidden="true">
+            <div class="msg">
+              <div class="msg__head">
+                <span class="msg__avatar">P</span>
+                <div class="msg__id">
+                  <p class="msg__from">Pivau</p>
+                  <p class="msg__meta">Message reçu · à l'instant</p>
+                </div>
+                <span class="badge badge--urgent">Urgence</span>
+              </div>
+              <div class="msg__bubble">
+                <p class="msg__line"><strong>Nouvel appel — M. Martin</strong><br />Apt 4B, Résidence Les Tilleuls · 21:04</p>
+                <p class="msg__quote">« De l'eau coule du plafond de la salle de bain, ça s'aggrave… »</p>
+                <ul class="msg__actions">
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Urgence « fuite d'eau » détectée</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Transféré à votre astreinte</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Récap complet en pièce jointe</li>
+                </ul>
+              </div>
+            </div>
+            <ul class="hero__benefits">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Décroché 24/7, en 2 sonneries</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Urgences détectées et triées</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Le récap vous arrive par message</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- LE PROBLÈME -->
+      <section class="section section--alt" id="probleme">
+        <div class="container">
+          <div class="section__head reveal">
+            <p class="eyebrow">Le constat</p>
+            <h2 class="section__title">Le téléphone n'attend pas que vous soyez disponible.</h2>
+          </div>
+          <div class="grid grid--4">
+            <article class="card reveal">
+              <span class="card__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="11.5" r="4.5"/><circle cx="18.5" cy="11.5" r="4.5"/><line x1="5.5" y1="16" x2="18.5" y2="16"/></svg></span>
+              <h3 class="card__title">Appels ratés = clients perdus</h3>
+              <p class="card__text">Un copropriétaire qui tombe sur la messagerie rappelle… ou râle à la prochaine AG.</p>
+            </article>
+            <article class="card reveal">
+              <span class="card__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+              <h3 class="card__title">Interruptions permanentes</h3>
+              <p class="card__text">Préparer une AG ou gérer un sinistre devient impossible quand le téléphone sonne toutes les 5 minutes.</p>
+            </article>
+            <article class="card reveal">
+              <span class="card__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+              <h3 class="card__title">Les urgences arrivent le soir et le week-end</h3>
+              <p class="card__text">Une fuite à 21h, et personne ne décroche.</p>
+            </article>
+            <article class="card reveal">
+              <span class="card__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg></span>
+              <h3 class="card__title">Pas le budget pour embaucher</h3>
+              <p class="card__text">Un standard à temps plein coûte cher et reste indisponible la nuit et le week-end.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMMENT ÇA MARCHE -->
+      <section class="section" id="fonctionnement">
+        <div class="container">
+          <div class="section__head reveal">
+            <p class="eyebrow">Comment ça marche</p>
+            <h2 class="section__title">Il décroche, il trie, il vous transmet.</h2>
+          </div>
+          <ol class="steps">
+            <li class="step reveal">
+              <span class="step__num" aria-hidden="true">1</span>
+              <span class="step__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 2 16 8 22 8"/><line x1="22" y1="2" x2="16" y2="8"/><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+              <h3 class="step__title">Il décroche</h3>
+              <p class="step__text">24/7, voix française naturelle, au nom de votre cabinet.</p>
+            </li>
+            <li class="step reveal">
+              <span class="step__num" aria-hidden="true">2</span>
+              <span class="step__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></span>
+              <h3 class="step__title">Il trie &amp; qualifie</h3>
+              <p class="step__text">Il distingue une fuite active d'une simple question de charges, et recueille les infos utiles.</p>
+            </li>
+            <li class="step reveal">
+              <span class="step__num" aria-hidden="true">3</span>
+              <span class="step__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span>
+              <h3 class="step__title">Il agit</h3>
+              <p class="step__text">Il transfère immédiatement les vraies urgences à votre astreinte, prend un message qualifié pour le reste, et vous envoie un récap (email + SMS) après chaque appel.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- CE QU'IL FAIT (ET NE FAIT JAMAIS) -->
+      <section class="section section--alt" id="perimetre">
+        <div class="container">
+          <div class="section__head reveal">
+            <p class="eyebrow">Un périmètre clair</p>
+            <h2 class="section__title">Ce qu'il fait — et ce qu'il ne fait jamais.</h2>
+            <p class="section__subtitle">L'IA renforce votre gestionnaire. Elle ne le remplace pas : la relation humaine reste la vôtre.</p>
+          </div>
+          <div class="duo">
+            <div class="duo__col duo__col--do reveal">
+              <h3 class="duo__heading"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Il fait</h3>
+              <ul class="duo__list">
+                <li>Répond jour et nuit, week-ends et jours fériés</li>
+                <li>Reconnaît une urgence et la qualifie</li>
+                <li>Transfère à un humain quand il le faut</li>
+                <li>Envoie un récap complet (résumé + transcription) après chaque appel</li>
+                <li>Parle au nom de votre cabinet, avec vos consignes</li>
+              </ul>
+            </div>
+            <div class="duo__col duo__col--dont reveal">
+              <h3 class="duo__heading"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Il ne fait jamais</h3>
+              <ul class="duo__list">
+                <li>Inventer une information</li>
+                <li>Promettre une date d'intervention ou un montant</li>
+                <li>Donner un avis juridique</li>
+                <li>Remplacer votre relation avec vos copropriétaires</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMPARATIF -->
+      <section class="section section--alt" id="comparatif">
+        <div class="container">
+          <div class="section__head reveal">
+            <p class="eyebrow">Comparez</p>
+            <h2 class="section__title">Répondeur, secrétariat externe, ou Pivau ?</h2>
+          </div>
+          <div class="grid grid--3 compare">
+            <article class="compare-card reveal">
+              <header class="compare-card__head">
+                <h3 class="compare-card__name">Répondeur</h3>
+                <p class="compare-card__tag">La messagerie classique</p>
+              </header>
+              <ul class="compare-list">
+                <li class="is-no"><span class="compare-list__crit">Disponibilité</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></i>Boîte vocale, jamais de réponse</span></li>
+                <li class="is-no"><span class="compare-list__crit">Urgences nuit / week-end</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></i>Non traitées</span></li>
+                <li class="is-mid"><span class="compare-list__crit">Coût mensuel</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></i>Faible, mais clients perdus</span></li>
+                <li class="is-no"><span class="compare-list__crit">Connaît vos copropriétés</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></i>Non</span></li>
+                <li class="is-no"><span class="compare-list__crit">Récap automatique</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></i>Un simple message vocal</span></li>
+              </ul>
+            </article>
+            <article class="compare-card reveal">
+              <header class="compare-card__head">
+                <h3 class="compare-card__name">Secrétariat externe</h3>
+                <p class="compare-card__tag">Une équipe mutualisée</p>
+              </header>
+              <ul class="compare-list">
+                <li class="is-mid"><span class="compare-list__crit">Disponibilité</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></i>Horaires de bureau seulement</span></li>
+                <li class="is-no"><span class="compare-list__crit">Urgences nuit / week-end</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></i>Hors service le soir / week-end</span></li>
+                <li class="is-no"><span class="compare-list__crit">Coût mensuel</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></i>Élevé (forfait ou à l'appel)</span></li>
+                <li class="is-mid"><span class="compare-list__crit">Connaît vos copropriétés</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></i>Partiellement, scripts génériques</span></li>
+                <li class="is-mid"><span class="compare-list__crit">Récap automatique</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></i>Variable selon le prestataire</span></li>
+              </ul>
+            </article>
+            <article class="compare-card compare-card--featured reveal">
+              <header class="compare-card__head">
+                <span class="compare-card__badge">Recommandé</span>
+                <h3 class="compare-card__name">Pivau</h3>
+                <p class="compare-card__tag">(150 €/mois), tout compris</p>
+              </header>
+              <ul class="compare-list">
+                <li class="is-yes"><span class="compare-list__crit">Disponibilité</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></i>24/7, décroché en quelques secondes</span></li>
+                <li class="is-yes"><span class="compare-list__crit">Urgences nuit / week-end</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></i>Détectées et transférées à l'astreinte</span></li>
+                <li class="is-yes"><span class="compare-list__crit">Coût mensuel</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></i>(150 €/mois), tout compris</span></li>
+                <li class="is-yes"><span class="compare-list__crit">Connaît vos copropriétés</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></i>Configuré à votre nom et vos consignes</span></li>
+                <li class="is-yes"><span class="compare-list__crit">Récap automatique</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></i>Résumé + transcription à chaque appel</span></li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- POUR QUI -->
+      <section class="section section--accentband">
+        <div class="container">
+          <p class="audience reveal"><span class="audience__lead">Pensé pour les cabinets de syndic indépendants</span> qui veulent rester joignables sans alourdir leur structure.</p>
+        </div>
+      </section>
+
+      <!-- TARIFS -->
+      <section class="section" id="tarifs">
+        <div class="container">
+          <div class="section__head reveal">
+            <p class="eyebrow">Tarif</p>
+            <h2 class="section__title">Un seul forfait. Tout est dedans.</h2>
+            <p class="section__subtitle">Facturation mensuelle, sans engagement. Mise en service rapide.</p>
+          </div>
+          <div class="pricing-single">
+            <article class="plan plan--featured reveal">
+              <h3 class="plan__name">Pivau</h3>
+              <p class="plan__price"><span class="plan__amount plan__amount--text">(150&nbsp;€/mois)</span></p>
+              <p class="plan__desc">L'offre complète, sans option ni surprise.</p>
+              <ul class="plan__features">
+                <li>Décroché 24/7 au nom de votre cabinet</li>
+                <li>Tri et qualification de chaque appel</li>
+                <li>Détection des urgences et transfert vers votre astreinte</li>
+                <li>Récapitulatif par <strong>email et SMS</strong> après chaque appel</li>
+                <li>Consignes personnalisées par copropriété</li>
+                <li>Sans engagement, mise en service rapide</li>
+              </ul>
+              <a class="btn btn--accent plan__cta" href="#contact">Demander un rendez-vous</a>
+            </article>
+          </div>
+          <p class="pricing__note">Plusieurs gestionnaires ou très gros volume d'appels ? <a href="#contact">Parlons-en.</a></p>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section section--alt" id="faq">
+        <div class="container container--narrow">
+          <div class="section__head reveal">
+            <p class="eyebrow">Questions fréquentes</p>
+            <h2 class="section__title">Vous vous posez sûrement ces questions.</h2>
+          </div>
+          <div class="faq">
+            <div class="faq__item reveal">
+              <h3 class="faq__q"><button class="faq__trigger" aria-expanded="false" aria-controls="faq-1" id="faq-1-btn"><span>L'IA peut-elle dire n'importe quoi à mes copropriétaires ?</span><svg class="faq__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></h3>
+              <div class="faq__panel" id="faq-1" role="region" aria-labelledby="faq-1-btn"><p>Non. Son périmètre est strictement limité : elle ne donne ni montant, ni date d'intervention, ni avis juridique. En cas de doute, elle prend le message et vous le transmet.</p></div>
+            </div>
+            <div class="faq__item reveal">
+              <h3 class="faq__q"><button class="faq__trigger" aria-expanded="false" aria-controls="faq-2" id="faq-2-btn"><span>Et si c'est une vraie urgence ?</span><svg class="faq__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></h3>
+              <div class="faq__panel" id="faq-2" role="region" aria-labelledby="faq-2-btn"><p>Elle la détecte (fuite, ascenseur, chauffage, gaz) et transfère immédiatement à votre numéro d'astreinte, en vous résumant la situation.</p></div>
+            </div>
+            <div class="faq__item reveal">
+              <h3 class="faq__q"><button class="faq__trigger" aria-expanded="false" aria-controls="faq-3" id="faq-3-btn"><span>Est-ce que ça remplace mon gestionnaire ou ma secrétaire ?</span><svg class="faq__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></h3>
+              <div class="faq__panel" id="faq-3" role="region" aria-labelledby="faq-3-btn"><p>Non. Ça les décharge des appels répétitifs. La relation avec vos copropriétaires reste la vôtre.</p></div>
+            </div>
+            <div class="faq__item reveal">
+              <h3 class="faq__q"><button class="faq__trigger" aria-expanded="false" aria-controls="faq-4" id="faq-4-btn"><span>Mes données sont-elles protégées ?</span><svg class="faq__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></h3>
+              <div class="faq__panel" id="faq-4" role="region" aria-labelledby="faq-4-btn"><p>Oui, traitement conforme au RGPD. Voir notre <a href="#politique-confidentialite">politique de confidentialité</a>.</p></div>
+            </div>
+            <div class="faq__item reveal">
+              <h3 class="faq__q"><button class="faq__trigger" aria-expanded="false" aria-controls="faq-5" id="faq-5-btn"><span>Combien de temps pour la mise en service ?</span><svg class="faq__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></h3>
+              <div class="faq__panel" id="faq-5" role="region" aria-labelledby="faq-5-btn"><p>Rapide : on configure l'agent à votre nom et vos consignes, vous testez, puis on met votre numéro en ligne.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="section contact" id="contact">
+        <div class="container">
+          <div class="contact__grid">
+            <div class="contact__intro reveal">
+              <p class="eyebrow">Contact</p>
+              <h2 class="contact__title">Parlons de votre cabinet.</h2>
+              <p class="contact__lead">Pas de pitch. Pas de démo forcée. Une vraie conversation sur ce dont vous avez besoin.</p>
+              <a class="contact__phone" href="tel:+33673322061">
+                <span class="contact__ico contact__ico--lg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+                <span class="contact__phone-text">
+                  <span class="contact__phone-label">Appelez directement</span>
+                  <span class="contact__phone-number">06 73 32 20 61</span>
+                </span>
+              </a>
+              <div class="contact__info">
+                <div class="contact__row">
+                  <span class="contact__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span>
+                  <a href="mailto:conradchanel@gmail.com">conradchanel@gmail.com</a>
+                </div>
+              </div>
+              <p class="contact__fineprint">Réponse sous 24&nbsp;h ouvrées. Pas de spam, jamais.</p>
+            </div>
+
+            <div class="contact__form reveal">
+              <p class="form__status" id="form-status" hidden></p>
+              <form id="contact-form" action="https://formspree.io/f/xojrpplv" method="POST" novalidate>
+                <div class="field">
+                  <label class="field__label" for="f-cabinet">Nom du cabinet <span class="req" aria-hidden="true">*</span></label>
+                  <input class="field__input" type="text" id="f-cabinet" name="cabinet" placeholder="Cabinet Dupont Syndic" required autocomplete="organization" />
+                </div>
+                <div class="field">
+                  <label class="field__label" for="f-name">Votre nom <span class="req" aria-hidden="true">*</span></label>
+                  <input class="field__input" type="text" id="f-name" name="name" placeholder="Jean Dupont" required autocomplete="name" />
+                </div>
+                <div class="field">
+                  <label class="field__label" for="f-phone">Téléphone <span class="req" aria-hidden="true">*</span></label>
+                  <input class="field__input" type="tel" id="f-phone" name="phone" placeholder="06 XX XX XX XX" required autocomplete="tel" />
+                </div>
+                <div class="field">
+                  <label class="field__label" for="f-email">Email <span class="opt">(optionnel)</span></label>
+                  <input class="field__input" type="email" id="f-email" name="email" placeholder="jean@moncabinet.fr" autocomplete="email" />
+                </div>
+                <div class="field">
+                  <label class="field__label" for="f-message">Message <span class="opt">(optionnel)</span></label>
+                  <textarea class="field__textarea" id="f-message" name="message" placeholder="Parlez-moi de votre cabinet, ce qui vous pose problème…"></textarea>
+                </div>
+                <button class="btn btn--accent btn--lg form__submit" type="submit">Demander un rendez-vous</button>
+                <p class="form__note">Réponse sous 24&nbsp;h ouvrées. Sans engagement.</p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div><!-- /#view-accueil -->
+
+    <!-- =====================================================================
+         VUE 2 — MENTIONS LÉGALES
+         ================================================================== -->
+    <article id="view-mentions" class="legal" hidden>
+      <div class="container">
+        <div class="legal__doc">
+          <button class="legal__back" type="button" data-go-home>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+            Retour à l'accueil
+          </button>
+
+          <h1>Mentions légales</h1>
+          <p class="legal__updated">Dernière mise à jour : 10 mai 2026</p>
+
+          <h2><span class="legal__num">1</span> Éditeur du site</h2>
+          <p>Le site pivau.fr est édité par&nbsp;:</p>
+          <address>
+            <strong>Conrad Chanel</strong><br />
+            Entrepreneur individuel<br />
+            SIRET : 530 484 799<br />
+            Adresse : 128 Rue de la Boétie, 88000 Épinal, France<br />
+            Téléphone : <a href="tel:+33673322061">06 73 32 20 61</a><br />
+            E-mail : <a href="mailto:conradchanel@gmail.com">conradchanel@gmail.com</a><br />
+            Régime fiscal : TVA non applicable, art. 293 B du CGI.
+          </address>
+
+          <h2><span class="legal__num">2</span> Directeur de la publication</h2>
+          <p>Conrad Chanel, en qualité de représentant légal de Pivau.</p>
+
+          <h2><span class="legal__num">3</span> Hébergement</h2>
+          <p>Ce site est hébergé par GitHub Pages, service proposé par GitHub, Inc.&nbsp;:</p>
+          <address>
+            GitHub, Inc.<br />
+            88 Colin P. Kelly Jr. Street<br />
+            San Francisco, CA 94107, États-Unis<br />
+            Site : <a href="https://pages.github.com" target="_blank" rel="noopener">pages.github.com</a>
+          </address>
+
+          <h2><span class="legal__num">4</span> Propriété intellectuelle</h2>
+          <p>L'ensemble des éléments constituant ce site (textes, graphismes, logotypes, icônes, sons, logiciels…) est la propriété exclusive de Pivau / Conrad Chanel ou de ses partenaires. Toute reproduction, représentation, modification ou exploitation totale ou partielle du site ou de l'un de ces éléments, sans autorisation écrite préalable, est strictement interdite et constituerait une contrefaçon sanctionnée par les articles L. 335-2 et suivants du Code de la propriété intellectuelle.</p>
+
+          <h2><span class="legal__num">5</span> Liens hypertextes</h2>
+          <p>Le site peut contenir des liens vers des sites tiers. Pivau n'exerce aucun contrôle sur ces sites et décline toute responsabilité quant à leur contenu ou leur politique de confidentialité.</p>
+
+          <h2><span class="legal__num">6</span> Responsabilité</h2>
+          <p>Pivau s'efforce de maintenir les informations publiées à jour et exactes. Toutefois, Pivau ne saurait être tenu responsable des erreurs, omissions ou résultats pouvant être obtenus par mauvais usage des informations présentes sur ce site.</p>
+          <p>Pivau se réserve le droit de modifier à tout moment le contenu du site sans préavis.</p>
+
+          <h2><span class="legal__num">7</span> Données personnelles</h2>
+          <p>Le traitement des données personnelles collectées via ce site est décrit dans la <a href="#politique-confidentialite">Politique de confidentialité</a>.</p>
+
+          <h2><span class="legal__num">8</span> Droit applicable</h2>
+          <p>Le présent site est soumis au droit français. Tout litige relatif à son utilisation relève de la compétence exclusive des tribunaux français.</p>
+
+          <h2><span class="legal__num">9</span> Contact</h2>
+          <p>Pour toute question relative aux présentes mentions légales, vous pouvez nous contacter à l'adresse <a href="mailto:conradchanel@gmail.com">conradchanel@gmail.com</a> ou par téléphone au <a href="tel:+33673322061">06 73 32 20 61</a>.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- =====================================================================
+         VUE 3 — POLITIQUE DE CONFIDENTIALITÉ (RGPD)
+         ================================================================== -->
+    <article id="view-confidentialite" class="legal" hidden>
+      <div class="container">
+        <div class="legal__doc">
+          <button class="legal__back" type="button" data-go-home>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+            Retour à l'accueil
+          </button>
+
+          <h1>Politique de confidentialité</h1>
+          <p class="legal__updated">Dernière mise à jour : 10 mai 2026</p>
+
+          <h2><span class="legal__num">1</span> Responsable du traitement</h2>
+          <address>
+            Conrad Chanel / Pivau<br />
+            128 Rue de la Boétie, 88000 Épinal, France<br />
+            E-mail : <a href="mailto:conradchanel@gmail.com">conradchanel@gmail.com</a><br />
+            Téléphone : <a href="tel:+33673322061">06 73 32 20 61</a>
+          </address>
+
+          <h2><span class="legal__num">2</span> Données collectées</h2>
+          <p>Dans le cadre du formulaire de contact présent sur ce site, nous collectons les données suivantes&nbsp;:</p>
+          <ul>
+            <li>Prénom et nom</li>
+            <li>Nom de l'établissement</li>
+            <li>Numéro de téléphone</li>
+            <li>Adresse e-mail</li>
+            <li>Message libre (optionnel)</li>
+          </ul>
+          <p>Aucune autre donnée (cookies de tracking, données de navigation à des fins publicitaires) n'est collectée.</p>
+
+          <h2><span class="legal__num">3</span> Finalités et bases légales</h2>
+          <div class="legal__wrap">
+            <table class="legal__table">
+              <thead><tr><th>Finalité</th><th>Base légale</th></tr></thead>
+              <tbody>
+                <tr><td>Répondre à votre demande de contact / rendez-vous</td><td>Intérêt légitime (art. 6.1.f RGPD)</td></tr>
+                <tr><td>Amélioration du service et statistiques anonymes</td><td>Intérêt légitime (art. 6.1.f RGPD)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2><span class="legal__num">4</span> Durée de conservation</h2>
+          <p>Les données transmises via le formulaire sont conservées pour une durée maximale de 3 ans à compter de la dernière interaction, puis supprimées ou anonymisées.</p>
+
+          <h2><span class="legal__num">5</span> Destinataires et sous-traitants</h2>
+          <p>Vos données peuvent être transmises aux sous-traitants suivants, dans le strict cadre des finalités définies ci-dessus&nbsp;:</p>
+          <div class="legal__wrap">
+            <table class="legal__table">
+              <thead><tr><th>Sous-traitant</th><th>Rôle</th><th>Localisation</th></tr></thead>
+              <tbody>
+                <tr><td>Formspree (formspree.io)</td><td>Acheminement des formulaires de contact par e-mail</td><td>États-Unis — couvert par les clauses contractuelles types de l'UE</td></tr>
+                <tr><td>Google Fonts</td><td>Chargement de la police Inter (requête HTTP vers les serveurs Google)</td><td>États-Unis — couvert par les clauses contractuelles types de l'UE</td></tr>
+                <tr><td>GitHub Pages</td><td>Hébergement statique du site</td><td>États-Unis — couvert par les clauses contractuelles types de l'UE</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Aucune donnée n'est vendue ou cédée à des tiers à des fins commerciales.</p>
+
+          <h2><span class="legal__num">6</span> Transferts hors UE</h2>
+          <p>Les sous-traitants mentionnés ci-dessus sont établis aux États-Unis. Ces transferts sont encadrés par des clauses contractuelles types approuvées par la Commission européenne, conformément à l'article 46 du RGPD.</p>
+
+          <h2><span class="legal__num">7</span> Vos droits</h2>
+          <p>Conformément au RGPD (Règlement UE 2016/679) et à la loi Informatique et Libertés, vous disposez des droits suivants sur vos données personnelles&nbsp;:</p>
+          <ul>
+            <li><strong>Droit d'accès</strong> — obtenir une copie des données vous concernant</li>
+            <li><strong>Droit de rectification</strong> — corriger des données inexactes ou incomplètes</li>
+            <li><strong>Droit à l'effacement</strong> — demander la suppression de vos données</li>
+            <li><strong>Droit à la limitation</strong> — restreindre temporairement le traitement</li>
+            <li><strong>Droit d'opposition</strong> — s'opposer à un traitement basé sur l'intérêt légitime</li>
+            <li><strong>Droit à la portabilité</strong> — recevoir vos données dans un format structuré</li>
+          </ul>
+          <p>Pour exercer ces droits, contactez-nous à&nbsp;: <a href="mailto:conradchanel@gmail.com">conradchanel@gmail.com</a>. Nous répondrons dans un délai maximum de 30 jours.</p>
+
+          <h2><span class="legal__num">8</span> Cookies</h2>
+          <p>Ce site n'utilise aucun cookie de tracking ni aucun cookie publicitaire. Le seul cookie susceptible d'être déposé est un cookie technique de session, strictement nécessaire au fonctionnement du site, qui ne nécessite pas de consentement préalable au titre de la directive ePrivacy.</p>
+
+          <h2><span class="legal__num">9</span> Sécurité</h2>
+          <p>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données contre tout accès non autorisé, perte ou divulgation : connexion HTTPS, accès restreints, hébergement sécurisé.</p>
+
+          <h2><span class="legal__num">10</span> Réclamation auprès de la CNIL</h2>
+          <p>Si vous estimez que le traitement de vos données ne respecte pas la réglementation, vous avez le droit d'introduire une réclamation auprès de la CNIL (Commission Nationale de l'Informatique et des Libertés)&nbsp;:</p>
+          <address>
+            CNIL — 3 Place de Fontenoy, TSA 80715, 75334 Paris Cedex 07<br />
+            Site : <a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>
+          </address>
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+  <!-- =========================================================================
+       FOOTER (commun à toutes les vues)
+       ====================================================================== -->
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div class="site-footer__brand">
+        <a class="brand brand--footer" href="#accueil">
+          <span class="brand__mark" aria-hidden="true"><svg viewBox="0 0 64 64"><use href="#pivau-mark"/></svg></span>
+          <span class="brand__name">Pivau</span>
+        </a>
+        <p class="site-footer__tagline">L'assistant téléphonique IA des syndics indépendants. Il prend le standard, vous gardez la relation.</p>
+      </div>
+      <nav class="site-footer__links" aria-label="Liens de pied de page">
+        <a href="#mentions-legales">Mentions légales</a>
+        <a href="#politique-confidentialite">Politique de confidentialité</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+    <div class="container site-footer__legal">
+      <p>© <span id="year">2026</span> Pivau. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       SCRIPTS — intégrés ici
+       ====================================================================== -->
+  <script>
+  (function () {
+    'use strict';
+
+    /* -----------------------------------------------------------------------
+       0. MINI-ROUTEUR « pages en un seul fichier »
+          Bascule entre accueil / mentions / confidentialité via l'ancre d'URL.
+          Vers une vue légale : TÉLÉPORTATION (scroll instantané en haut).
+          Les autres ancres (#tarifs, #faq, #contact…) restent de simples
+          défilements internes.
+       -------------------------------------------------------------------- */
+    var VIEWS = {
+      '#mentions-legales': 'view-mentions',
+      '#politique-confidentialite': 'view-confidentialite'
+    };
+    var ALL_VIEWS = ['view-accueil', 'view-mentions', 'view-confidentialite'];
+
+    function showView(visibleId) {
+      ALL_VIEWS.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.hidden = (id !== visibleId);
+      });
+      // Registre formel sur les sous-pages (fond + en-tête plus sobres)
+      var isLegal = (visibleId !== 'view-accueil');
+      document.body.classList.toggle('is-legal', isLegal);
+      document.body.classList.toggle('legal-bg', isLegal);
+    }
+    function teleportTop() {
+      // Coupe temporairement le défilement fluide pour une vraie téléportation
+      var html = document.documentElement;
+      var prev = html.style.scrollBehavior;
+      html.style.scrollBehavior = 'auto';
+      window.scrollTo(0, 0);
+      html.style.scrollBehavior = prev;
+    }
+    function route() {
+      var hash = location.hash;
+      if (VIEWS[hash]) {
+        showView(VIEWS[hash]);
+        teleportTop();
+      } else {
+        showView('view-accueil');
+        // Ancre de défilement interne (ex. #tarifs, #contact) : on rejoint la cible
+        var target = (hash && hash.length > 1) ? document.querySelector(hash) : null;
+        if (target) { target.scrollIntoView(); } else { teleportTop(); }
+      }
+    }
+    window.addEventListener('hashchange', route);
+
+    // Boutons « Retour à l'accueil » des pages légales
+    document.querySelectorAll('[data-go-home]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (location.hash) { location.hash = ''; } // déclenche le routeur
+        else { route(); }
+      });
+    });
+
+    /* -----------------------------------------------------------------------
+       1. MENU MOBILE (burger)
+       -------------------------------------------------------------------- */
+    var navToggle = document.querySelector('.nav-toggle');
+    var nav = document.getElementById('menu-principal');
+    if (navToggle && nav) {
+      var closeMenu = function () {
+        nav.classList.remove('is-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+        navToggle.setAttribute('aria-label', 'Ouvrir le menu');
+      };
+      var openMenu = function () {
+        nav.classList.add('is-open');
+        navToggle.setAttribute('aria-expanded', 'true');
+        navToggle.setAttribute('aria-label', 'Fermer le menu');
+      };
+      navToggle.addEventListener('click', function () {
+        (navToggle.getAttribute('aria-expanded') === 'true') ? closeMenu() : openMenu();
+      });
+      nav.querySelectorAll('a').forEach(function (link) { link.addEventListener('click', closeMenu); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+      window.addEventListener('resize', function () { if (window.innerWidth > 860) closeMenu(); });
+    }
+
+    /* -----------------------------------------------------------------------
+       2. ACCORDÉON FAQ
+       -------------------------------------------------------------------- */
+    document.querySelectorAll('.faq__trigger').forEach(function (trigger) {
+      trigger.addEventListener('click', function () {
+        var panel = document.getElementById(trigger.getAttribute('aria-controls'));
+        var isOpen = trigger.getAttribute('aria-expanded') === 'true';
+        trigger.setAttribute('aria-expanded', String(!isOpen));
+        if (panel) panel.classList.toggle('is-open', !isOpen);
+      });
+    });
+
+    /* -----------------------------------------------------------------------
+       3. FORMULAIRE DE CONTACT
+          Si l'identifiant Formspree n'est pas encore renseigné, on bascule
+          automatiquement sur un envoi par e-mail (mailto) — le formulaire
+          fonctionne donc dès maintenant.
+       -------------------------------------------------------------------- */
+    var form = document.getElementById('contact-form');
+    var status = document.getElementById('form-status');
+    if (form) {
+      var actionConfigured = form.getAttribute('action').indexOf('[FORMSPREE_ID]') === -1;
+
+      var val = function (n) { var el = form.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ''; };
+      var showStatus = function (msg) {
+        if (!status) return;
+        status.textContent = msg;
+        status.hidden = false;
+        status.classList.add('is-ok');
+      };
+
+      form.addEventListener('submit', function (e) {
+        // Validation native du navigateur
+        if (!form.checkValidity()) { return; }
+
+        if (!actionConfigured) {
+          // Pas de Formspree → on prépare un e-mail pré-rempli
+          e.preventDefault();
+          var subject = 'Demande de rendez-vous — ' + (val('cabinet') || 'Pivau');
+          var body =
+            'Cabinet : ' + val('cabinet') + '\n' +
+            'Nom : ' + val('name') + '\n' +
+            'Téléphone : ' + val('phone') + '\n' +
+            'Email : ' + (val('email') || '—') + '\n\n' +
+            'Message :\n' + (val('message') || '—');
+          window.location.href = 'mailto:conradchanel@gmail.com'
+            + '?subject=' + encodeURIComponent(subject)
+            + '&body=' + encodeURIComponent(body);
+          showStatus('Votre logiciel de messagerie va s’ouvrir avec votre demande pré-remplie. Sinon, écrivez-nous à conradchanel@gmail.com.');
+        }
+        // Si Formspree est configuré, on laisse l'envoi POST natif se faire.
+      });
+    }
+
+    /* -----------------------------------------------------------------------
+       3b. FORMATAGE AUTOMATIQUE DU CHAMP TÉLÉPHONE
+           Insère un espace tous les 2 chiffres, limite à 10 chiffres.
+           Ex : 0673322061 → 06 73 32 20 61
+       -------------------------------------------------------------------- */
+    var phoneInput = document.getElementById('f-phone');
+    if (phoneInput) {
+      phoneInput.addEventListener('input', function () {
+        var digits = this.value.replace(/\D/g, '').slice(0, 10);
+        this.value = digits.replace(/(\d{2})(?=\d)/g, '$1 ');
+      });
+      phoneInput.setAttribute('maxlength', '14'); // 10 chiffres + 4 espaces
+    }
+
+    /* -----------------------------------------------------------------------
+       4. APPARITION EN FONDU AU DÉFILEMENT
+       -------------------------------------------------------------------- */
+    var reveals = document.querySelectorAll('.reveal');
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced || !('IntersectionObserver' in window)) {
+      reveals.forEach(function (el) { el.classList.add('is-visible'); });
+    } else {
+      var observer = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      reveals.forEach(function (el) { observer.observe(el); });
+    }
+
+    /* -----------------------------------------------------------------------
+       5. OMBRE DE L'EN-TÊTE AU DÉFILEMENT
+       -------------------------------------------------------------------- */
+    var header = document.querySelector('.site-header');
+    if (header) {
+      var onScroll = function () { header.classList.toggle('is-scrolled', window.scrollY > 8); };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+
+    /* -----------------------------------------------------------------------
+       6. ANNÉE COURANTE + ROUTAGE INITIAL
+       -------------------------------------------------------------------- */
+    var yearEl = document.getElementById('year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    route(); // applique la bonne vue au chargement
+  })();
+  </script>
+</body>
+</html>
