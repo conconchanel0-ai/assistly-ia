@@ -11,7 +11,7 @@
     mini-routeur JavaScript via l'ancre d'URL (#mentions-legales, etc.).
     Le passage vers une vue légale TÉLÉPORTE (pas de défilement animé).
 
-  ► Tarif : 150 €/mois · Formulaire : Formspree (xojrpplv) · Numéro de démo :
+  ► Tarif : 150 €/mois · Formulaire : Formspree (mnjwoogb) · Numéro de démo :
     à ajouter plus tard (aucun numéro affiché pour l'instant).
   =============================================================================
 -->
@@ -256,8 +256,13 @@
   .plan__features li { position: relative; padding-left: 1.7rem; font-size: .95rem; color: var(--text-soft); }
   .plan__features li::before { content: ""; position: absolute; left: 0; top: .35em; width: 18px; height: 18px; background-repeat: no-repeat; background-position: center; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23084729' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E"); }
   .plan__cta { width: 100%; margin-top: auto; }
-  .pricing-single { max-width: 460px; margin-inline: auto; }
-  .pricing__note { text-align: center; margin-top: 1.75rem; font-size: .95rem; color: var(--text-soft); }
+  .pricing-grid { align-items: stretch; }
+  .plan__tag { font-size: .88rem; color: var(--text-soft); margin: -.2rem 0 .75rem; font-weight: 500; }
+  .plan__currency { font-size: 1.5rem; font-weight: 800; color: var(--ink); }
+  .plan--surmesure { border-style: dashed; }
+  .plan--surmesure .plan__amount--text { font-size: 1.5rem; font-weight: 800; color: var(--green); }
+  .plan__price--surm { margin: 0 0 .35rem; }
+  .pricing__note { text-align: center; margin-top: 1.75rem; font-size: .88rem; color: var(--text-mute); }
 
   /* 14. FAQ ---------------------------------------------------------------- */
   .faq { display: grid; gap: .85rem; }
@@ -308,6 +313,7 @@
   .form__note { text-align: center; font-size: .9rem; color: var(--text-mute); margin: .9rem 0 0; }
   .form__status { margin: 0 0 1rem; padding: .8rem 1rem; border-radius: var(--radius); font-size: .95rem; font-weight: 500; }
   .form__status.is-ok { background: rgba(8,71,41,.10); color: var(--green); }
+  .form__status.is-error { background: rgba(180,35,35,.10); color: #b42323; }
 
   /* 16. FOOTER ------------------------------------------------------------- */
   .site-footer { background: var(--ink); color: rgba(255,255,255,.66); padding-top: clamp(2.5rem, 6vw, 3.5rem); }
@@ -632,12 +638,12 @@
               <header class="compare-card__head">
                 <span class="compare-card__badge">Recommandé</span>
                 <h3 class="compare-card__name">Pivau</h3>
-                <p class="compare-card__tag">(150 €/mois), tout compris</p>
+                <p class="compare-card__tag">À partir de ~100 €/mois</p>
               </header>
               <ul class="compare-list">
                 <li class="is-yes"><span class="compare-list__crit">Disponibilité</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></i>24/7, décroché en quelques secondes</span></li>
                 <li class="is-yes"><span class="compare-list__crit">Urgences nuit / week-end</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></i>Détectées et transférées à l'astreinte</span></li>
-                <li class="is-yes"><span class="compare-list__crit">Coût mensuel</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></i>(150 €/mois), tout compris</span></li>
+                <li class="is-yes"><span class="compare-list__crit">Coût mensuel</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></i>À partir de ~100 €/mois, tout compris</span></li>
                 <li class="is-yes"><span class="compare-list__crit">Connaît vos copropriétés</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></i>Configuré à votre nom et vos consignes</span></li>
                 <li class="is-yes"><span class="compare-list__crit">Récap automatique</span><span class="compare-list__val"><i class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></i>Résumé + transcription à chaque appel</span></li>
               </ul>
@@ -657,27 +663,57 @@
       <section class="section" id="tarifs">
         <div class="container">
           <div class="section__head reveal">
-            <p class="eyebrow">Tarif</p>
-            <h2 class="section__title">Un seul forfait. Tout est dedans.</h2>
-            <p class="section__subtitle">Facturation mensuelle, sans engagement. Mise en service rapide.</p>
+            <p class="eyebrow">Tarifs</p>
+            <h2 class="section__title">Un forfait adapté à votre volume.</h2>
+            <p class="section__subtitle">Sans engagement. Mise en service rapide. Prix indicatifs.</p>
           </div>
-          <div class="pricing-single">
-            <article class="plan plan--featured reveal">
-              <h3 class="plan__name">Pivau</h3>
-              <p class="plan__price"><span class="plan__amount plan__amount--text">(150&nbsp;€/mois)</span></p>
-              <p class="plan__desc">L'offre complète, sans option ni surprise.</p>
+          <div class="grid grid--3 pricing-grid">
+            <article class="plan reveal">
+              <h3 class="plan__name">Essentiel</h3>
+              <p class="plan__tag">Petit cabinet</p>
+              <p class="plan__price"><span class="plan__amount">~100</span><span class="plan__currency">&nbsp;€</span><span class="plan__period">/mois</span></p>
+              <p class="plan__desc">Jusqu'à ~150 appels/mois inclus.</p>
               <ul class="plan__features">
                 <li>Décroché 24/7 au nom de votre cabinet</li>
                 <li>Tri et qualification de chaque appel</li>
                 <li>Détection des urgences et transfert vers votre astreinte</li>
-                <li>Récapitulatif par <strong>email et SMS</strong> après chaque appel</li>
+                <li>Récapitulatif par <strong>email</strong> après chaque appel</li>
                 <li>Consignes personnalisées par copropriété</li>
+              </ul>
+              <a class="btn btn--ghost plan__cta" href="#contact">Demander un rendez-vous</a>
+            </article>
+
+            <article class="plan plan--featured reveal">
+              <span class="plan__badge">Recommandé</span>
+              <h3 class="plan__name">Pro</h3>
+              <p class="plan__tag">Cabinet actif</p>
+              <p class="plan__price"><span class="plan__amount">~200</span><span class="plan__currency">&nbsp;€</span><span class="plan__period">/mois</span></p>
+              <p class="plan__desc">Jusqu'à ~400 appels/mois inclus.</p>
+              <ul class="plan__features">
+                <li>Tout l'Essentiel, plus :</li>
+                <li>Récapitulatif par <strong>email + SMS</strong> après chaque appel</li>
+                <li>Voix premium (plus naturelle)</li>
+                <li>Priorité au transfert d'urgence</li>
                 <li>Sans engagement, mise en service rapide</li>
               </ul>
               <a class="btn btn--accent plan__cta" href="#contact">Demander un rendez-vous</a>
             </article>
+
+            <article class="plan plan--surmesure reveal">
+              <h3 class="plan__name">Sur mesure</h3>
+              <p class="plan__tag">Plusieurs gestionnaires / gros volume</p>
+              <p class="plan__price plan__price--surm"><span class="plan__amount--text">Parlons-en</span></p>
+              <p class="plan__desc">Volume élevé, plusieurs lignes ou gestionnaires, intégrations spécifiques.</p>
+              <ul class="plan__features">
+                <li>Volume d'appels illimité</li>
+                <li>Plusieurs lignes ou gestionnaires</li>
+                <li>Intégrations sur demande</li>
+                <li>Accompagnement dédié</li>
+              </ul>
+              <a class="btn btn--primary plan__cta" href="#contact-form">Contactez-nous</a>
+            </article>
           </div>
-          <p class="pricing__note">Plusieurs gestionnaires ou très gros volume d'appels ? <a href="#contact">Parlons-en.</a></p>
+          <p class="pricing__note">Prix indicatifs, sans TVA (TVA non applicable, art. 293 B du CGI). Facturation mensuelle, sans engagement.</p>
         </div>
       </section>
 
@@ -707,7 +743,7 @@
             </div>
             <div class="faq__item reveal">
               <h3 class="faq__q"><button class="faq__trigger" aria-expanded="false" aria-controls="faq-5" id="faq-5-btn"><span>Combien de temps pour la mise en service ?</span><svg class="faq__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button></h3>
-              <div class="faq__panel" id="faq-5" role="region" aria-labelledby="faq-5-btn"><p>Rapide : on configure l'agent à votre nom et vos consignes, vous testez, puis on met votre numéro en ligne.</p></div>
+              <div class="faq__panel" id="faq-5" role="region" aria-labelledby="faq-5-btn"><p>Moins d'une semaine : on configure l'agent à votre nom et vos consignes, vous testez, puis on met votre numéro en ligne.</p></div>
             </div>
           </div>
         </div>
@@ -739,7 +775,9 @@
 
             <div class="contact__form reveal">
               <p class="form__status" id="form-status" hidden></p>
-              <form id="contact-form" action="https://formspree.io/f/xojrpplv" method="POST" novalidate>
+              <form id="contact-form" action="https://formspree.io/f/mnjwoogb" method="POST" novalidate>
+                <input type="hidden" name="_subject" value="Nouveau contact — démo agent vocal syndic" />
+                <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true" />
                 <div class="field">
                   <label class="field__label" for="f-cabinet">Nom du cabinet <span class="req" aria-hidden="true">*</span></label>
                   <input class="field__input" type="text" id="f-cabinet" name="cabinet" placeholder="Cabinet Dupont Syndic" required autocomplete="organization" />
@@ -1051,24 +1089,27 @@
     var form = document.getElementById('contact-form');
     var status = document.getElementById('form-status');
     if (form) {
-      var actionConfigured = form.getAttribute('action').indexOf('[FORMSPREE_ID]') === -1;
+      var action = form.getAttribute('action');
+      var formspreeConfigured = action.indexOf('formspree.io') !== -1 && action.indexOf('[FORMSPREE_ID]') === -1;
+      var submitBtn = form.querySelector('.form__submit');
 
       var val = function (n) { var el = form.querySelector('[name="' + n + '"]'); return el ? el.value.trim() : ''; };
-      var showStatus = function (msg) {
+      var showStatus = function (msg, ok) {
         if (!status) return;
         status.textContent = msg;
         status.hidden = false;
-        status.classList.add('is-ok');
+        status.classList.remove('is-ok', 'is-error');
+        status.classList.add(ok ? 'is-ok' : 'is-error');
       };
 
       form.addEventListener('submit', function (e) {
+        e.preventDefault();
         // Validation native du navigateur
-        if (!form.checkValidity()) { return; }
+        if (!form.checkValidity()) { form.reportValidity(); return; }
 
-        if (!actionConfigured) {
-          // Pas de Formspree → on prépare un e-mail pré-rempli
-          e.preventDefault();
-          var subject = 'Demande de rendez-vous — ' + (val('cabinet') || 'Pivau');
+        // Repli e-mail si Formspree n'est pas configuré
+        if (!formspreeConfigured) {
+          var subject = 'Demande de rendez-vous — ' + (val('cabinet') || 'votre cabinet');
           var body =
             'Cabinet : ' + val('cabinet') + '\n' +
             'Nom : ' + val('name') + '\n' +
@@ -1078,9 +1119,38 @@
           window.location.href = 'mailto:conradchanel@gmail.com'
             + '?subject=' + encodeURIComponent(subject)
             + '&body=' + encodeURIComponent(body);
-          showStatus('Votre logiciel de messagerie va s’ouvrir avec votre demande pré-remplie. Sinon, écrivez-nous à conradchanel@gmail.com.');
+          showStatus('Votre logiciel de messagerie va s’ouvrir avec votre demande pré-remplie.', true);
+          return;
         }
-        // Si Formspree est configuré, on laisse l'envoi POST natif se faire.
+
+        // Envoi AJAX vers Formspree : pas de redirection, pas de page « Merci! »
+        var originalLabel = submitBtn ? submitBtn.textContent : '';
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Envoi…'; }
+
+        fetch(action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(function (response) {
+          if (response.ok) {
+            form.reset();
+            showStatus('Merci, votre demande est bien envoyée. On vous recontacte sous 24 h ouvrées.', true);
+          } else {
+            return response.json().then(function (data) {
+              var msg = (data && data.errors && data.errors.length)
+                ? data.errors.map(function (er) { return er.message; }).join(' ')
+                : 'Une erreur est survenue. Écrivez-nous à conradchanel@gmail.com.';
+              showStatus(msg, false);
+            });
+          }
+        })
+        .catch(function () {
+          showStatus('Connexion impossible. Écrivez-nous directement à conradchanel@gmail.com.', false);
+        })
+        .then(function () {
+          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+        });
       });
     }
 
